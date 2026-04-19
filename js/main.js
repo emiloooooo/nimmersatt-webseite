@@ -192,20 +192,13 @@ const PROJECTS = [
    see the title + a friendly placeholder. Kept separate from PROJECTS so
    the render pipeline never tries to load nonexistent frame folders.
 ══════════════════════════════════════════════ */
-// Several earlier placeholders were promoted to full PROJECTS (Berlin
-// Fashion Week, Soyhan, index®) or retired (Dante Yn feat. Nibor).
-// What remains here is archive-only — menu items that open the player
-// in "coming soon" mode without a scroll-scrub frame sequence.
-const LEGACY_ENTRIES = [
-  {
-    title: 'Ronzino Von Oswald',
-    body:  'Project archive — the full reel is on its way. Reach out if you need the master before it lands here.',
-    credits: [
-      { label: 'Direction', value: 'nimmersatt' },
-      { label: 'Status',    value: 'Coming soon' },
-    ],
-  },
-];
+// Earlier placeholders were either promoted to full PROJECTS (Berlin
+// Fashion Week → berlin, Soyhan → wedding, index® → portugal) or
+// retired entirely (Dante Yn feat. Nibor, Ronzino Von Oswald). Empty
+// by design — the menu now shows only real scroll-scrub projects.
+// Kept as an array so the menu-population loop stays uniform if
+// archive-only entries come back later.
+const LEGACY_ENTRIES = [];
 
 /* ══════════════════════════════════════════════
    KONFIGURATION
