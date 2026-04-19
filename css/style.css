@@ -162,6 +162,59 @@ html, body {
   background: rgba(0, 0, 0, 0.38);
 }
 
+/* ── Mobile project nav ──
+   Hidden on desktop (scroll/trackpad does the job); on mobile, two
+   soft glass buttons at the bottom advance the scene one full project
+   cycle per tap. That replaces the finger-drag-through-hard-stop dance
+   with a single tap while keeping the existing scroll-scrub animation
+   visible in between. */
+.project-nav {
+  display: none;
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1.1rem);
+  transform: translateX(-50%);
+  gap: 0.65rem;
+  z-index: 900;
+  transition: opacity 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+              transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.project-nav.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 12px);
+}
+.project-nav__btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.82);
+  color: #000;
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.28s cubic-bezier(0.23, 1, 0.32, 1),
+              transform 0.28s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.project-nav__btn svg {
+  width: 46%;
+  height: 46%;
+  display: block;
+}
+.project-nav__btn:active {
+  transform: scale(0.94);
+  background: #ffffff;
+}
+.project-nav__btn:focus-visible {
+  outline: 1px solid rgba(0, 0, 0, 0.5);
+  outline-offset: 3px;
+}
+
 /* ── Logo-Button oben rechts ── */
 .logo-btn {
   position: fixed;
@@ -397,21 +450,24 @@ html, body {
    same — no sidebar competing for attention with the video.                */
 .player-modal__card {
   position: relative;
-  width: min(92vw, 1080px);
-  max-height: 92vh;
+  width: min(92vw, 1120px);
+  max-height: 94vh;
   margin: auto;
   top: 50%;
-  transform: translateY(-50%) scale(0.96);
-  /* Clean white card, black text — sits as a quiet object on top of the
-     softly blurred scene. No drop shadow: the backdrop-blur already
-     creates enough separation without adding heavy visual noise. */
-  background: #ffffff;
-  color: #000;
-  border-radius: 14px;
+  transform: translateY(-50%) scale(0.965);
+  /* Warm off-white so the card feels material rather than a bare HTML
+     surface, and a soft shadow so it lifts off the blurred scene at
+     any viewport size. */
+  background: #fdfcf9;
+  color: #0a0a0a;
+  border-radius: 20px;
   overflow: hidden;
   opacity: 0;
   display: flex;
   flex-direction: column;
+  box-shadow:
+    0 30px 60px -20px rgba(0, 0, 0, 0.18),
+    0 10px 24px -14px rgba(0, 0, 0, 0.14);
   transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
               opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -422,38 +478,41 @@ html, body {
 
 .player-modal__close {
   position: absolute;
-  top: clamp(0.9rem, 1.4vw, 1.2rem);
-  right: clamp(0.9rem, 1.4vw, 1.2rem);
-  width: 36px;
-  height: 36px;
+  top: clamp(0.9rem, 1.4vw, 1.3rem);
+  right: clamp(0.9rem, 1.4vw, 1.3rem);
+  width: 40px;
+  height: 40px;
   border: 0;
   background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 50%;
   font-family: 'Martian Mono', monospace;
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   line-height: 1;
-  color: #000;
+  color: #0a0a0a;
   cursor: pointer;
-  z-index: 2;
+  z-index: 4;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  transition: background 0.24s cubic-bezier(0.23, 1, 0.32, 1),
+              transform 0.24s cubic-bezier(0.23, 1, 0.32, 1);
 }
 .player-modal__close:hover {
   background: #ffffff;
-  transform: scale(1.06);
+  transform: scale(1.08);
 }
 
 .player-modal__stage {
   position: relative;
   flex: 0 0 auto;
   width: 100%;
-  /* Light frame around the video — white like the card, no hard black
-     box. object-fit: contain on the <video> handles aspect ratio. */
-  background: #ffffff;
+  /* Deep charcoal frame makes the video read as the hero of the card,
+     while the card body stays cream for the typography. Separation
+     between stage and info without a hard seam. */
+  background: #0b0b0b;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -462,9 +521,9 @@ html, body {
 .player-modal__video {
   display: block;
   width: 100%;
-  max-height: 62vh;
+  max-height: 66vh;
   object-fit: contain;
-  background: #ffffff;
+  background: #0b0b0b;
   transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .player-modal__video.is-swapping { opacity: 0; }
@@ -544,28 +603,31 @@ html, body {
 }
 .player-modal__nav[hidden] { display: none; }
 
-/* Counter — mono, small, editorial. Anchors the carousel so the extra
-   content is legible at a glance without competing with the video. */
+/* Counter — mono, small, editorial. Bottom-left of the stage: out of
+   the way of the close button (card top-right), the fullscreen button
+   (stage top-left) and the native video scrubber (which animates over
+   the bottom-centre, not the corner). */
 .player-modal__counter {
   position: absolute;
-  top: clamp(0.9rem, 1.4vw, 1.2rem);
-  left: clamp(0.9rem, 1.4vw, 1.2rem);
+  bottom: clamp(0.9rem, 1.4vw, 1.3rem);
+  left: clamp(0.9rem, 1.4vw, 1.3rem);
   z-index: 3;
-  padding: 0.34rem 0.6rem;
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  padding: 0.32rem 0.6rem;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 999px;
   font-family: 'Martian Mono', monospace;
   font-weight: 300;
-  font-size: 0.68rem;
-  letter-spacing: 0.18em;
-  color: rgba(0, 0, 0, 0.72);
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
+  color: rgba(0, 0, 0, 0.74);
   font-feature-settings: "tnum" 1, "lnum" 1;
   display: flex;
   align-items: center;
   gap: 0.28em;
   pointer-events: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
 }
 .player-modal__counter[hidden] { display: none; }
 .player-modal__counter-sep { opacity: 0.42; }
@@ -701,6 +763,9 @@ body.is-player-open .logo-btn {
     padding-right: clamp(1.1rem, 5vw, 2rem);
   }
 
+  /* Reveal the project step-through buttons only on mobile. */
+  .project-nav { display: flex; }
+
   .text-title {
     font-size: clamp(1.6rem, 7.4vw, 2.4rem);
     white-space: nowrap; /* JS shrinks font-size to fit one line */
@@ -798,11 +863,35 @@ body.is-player-open .logo-btn {
   }
 
   .player-modal__close {
-    top: 0.7rem;
-    right: 0.7rem;
-    width: 32px;
-    height: 32px;
-    font-size: 1.15rem;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  /* Compact the carousel nav for mobile so it doesn't crowd the video
+     frame — smaller buttons, snug against the edges. */
+  .player-modal__nav {
+    width: 40px;
+    height: 40px;
+  }
+  .player-modal__nav--prev { left: 0.55rem; }
+  .player-modal__nav--next { right: 0.55rem; }
+  .player-modal__counter {
+    bottom: 0.65rem;
+    left: 0.65rem;
+    font-size: 0.6rem;
+    padding: 0.28rem 0.5rem;
+  }
+
+  /* Fullscreen button out of the way on mobile — still one-tap
+     reachable but slightly smaller. */
+  .player-modal__fs {
+    width: 34px;
+    height: 34px;
+    top: 0.55rem;
+    left: 0.55rem;
   }
 }
 

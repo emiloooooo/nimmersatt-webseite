@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rock+3D&family=Martian+Mono:wght@300;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=32">
+  <link rel="stylesheet" href="css/style.css?v=33">
   <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -62,6 +62,19 @@
     <p class="text-body"></p>
   </div>
 
+  <!-- Mobile project-step nav — shown only on narrow viewports. Each
+       click advances the scroll scene by one full project cycle so the
+       user never has to finger-drag through the hard stops. Hidden
+       when the menu or player modal is open. -->
+  <div class="project-nav is-hidden" id="project-nav" aria-label="Projektnavigation">
+    <button class="project-nav__btn" type="button" data-project-nav="prev" aria-label="Vorheriges Projekt">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5L8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="project-nav__btn" type="button" data-project-nav="next" aria-label="Nächstes Projekt">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
   <!-- Player Modal -->
   <div id="player-modal" class="player-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="player-title">
     <div class="player-modal__backdrop" data-close></div>
@@ -108,7 +121,7 @@
     </article>
   </div>
 
-  <script src="js/main.js?v=53"></script>
+  <script src="js/main.js?v=54"></script>
   <script src="js/chime.js?v=9"></script>
 </body>
 </html>

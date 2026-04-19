@@ -513,6 +513,7 @@ function drawVignette(ctx, w, h) {
   const menuViewport = document.getElementById('menu-viewport');
   const menuList     = document.getElementById('menu-list');
   const playerModal  = document.getElementById('player-modal');
+  const projectNav   = document.getElementById('project-nav');
   const fgCtx        = fgCanvas.getContext('2d', { alpha: true });
   const bgCtx        = bgCanvas.getContext('2d', { alpha: true });
 
@@ -671,7 +672,11 @@ function drawVignette(ctx, w, h) {
   let sceneReadyForInteraction = false;
 
   function armInteractionLater(delay) {
-    setTimeout(() => { sceneReadyForInteraction = true; }, delay);
+    setTimeout(() => {
+      sceneReadyForInteraction = true;
+      // Reveal the mobile project-nav once the scene is interactive.
+      if (projectNav) projectNav.classList.remove('is-hidden');
+    }, delay);
   }
 
   function dismiss() {
@@ -684,6 +689,11 @@ function drawVignette(ctx, w, h) {
     // (0.8 s CSS transition) — prevents the click-that-skips from also
     // opening the player the same frame.
     armInteractionLater(remaining + 400 + 850);
+    // Land on the first project fully emerged (localPos = 1.0). Without
+    // this the scene starts at the tiny scale 0.11 and the user has to
+    // scroll to see anything — the intended first impression is the
+    // hero frame, already open at the hard stop.
+    targetPos = 1.0;
   }
 
   // Skip-on-click: dismiss immediately and flip isReady so the scene
@@ -702,6 +712,10 @@ function drawVignette(ctx, w, h) {
       bgCanvas.classList.add('is-loaded');
     }
     preloader.classList.add('is-done');
+    // Same first-impression rule as dismiss(): land on project 0 fully
+    // emerged so a user who skips the loader sees the hero frame, not
+    // the tiny scale 0.11 start state.
+    targetPos = 1.0;
     // Stop the same click from bubbling to document — otherwise the
     // click-to-open-player handler would fire at the exact moment the
     // preloader starts fading.
@@ -783,6 +797,34 @@ function drawVignette(ctx, w, h) {
       return;
     }
     targetPos = newPos; // unbounded — infinity loop
+  }
+
+  // Project-step jump — used by the mobile nav buttons. Snaps targetPos
+  // to the next / previous project's hard stop so the scroll scene
+  // plays one full transition automatically. The existing tick lerp
+  // keeps the motion smooth, so the user sees the fade-out and fade-in
+  // animation between projects instead of a hard cut.
+  function jumpProjects(dir) {
+    inDeadzone    = false;
+    deadzoneAccum = 0;
+    const nearestStop = Math.round((currentPos - 1.0) / CYCLE_STEP) * CYCLE_STEP + 1.0;
+    targetPos = nearestStop + dir * CYCLE_STEP;
+  }
+
+  if (projectNav) {
+    projectNav.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-project-nav]');
+      if (!btn) return;
+      if (!sceneReadyForInteraction) return;
+      e.stopPropagation();
+      jumpProjects(btn.dataset.projectNav === 'next' ? 1 : -1);
+    });
+  }
+
+  function updateProjectNavVisibility() {
+    if (!projectNav) return;
+    const hide = isMenuOpen() || isPlayerOpen() || !sceneReadyForInteraction;
+    projectNav.classList.toggle('is-hidden', hide);
   }
 
   // Per-event delta cap keeps a single aggressive wheel tick from shooting
@@ -1268,12 +1310,14 @@ function drawVignette(ctx, w, h) {
     playerModal.classList.add('is-open');
     playerModal.setAttribute('aria-hidden', 'false');
     document.body.classList.add('is-player-open');
+    updateProjectNavVisibility();
   }
 
   function closePlayer() {
     playerModal.classList.remove('is-open');
     playerModal.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('is-player-open');
+    updateProjectNavVisibility();
     // Stop any playing video so audio doesn't continue behind the
     // scroll-scene after the modal closes.
     if (playerVideo) {
@@ -1329,6 +1373,7 @@ function drawVignette(ctx, w, h) {
     menu.setAttribute('aria-hidden', open ? 'false' : 'true');
     logoBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     logoBtn.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+    updateProjectNavVisibility();
     // Reset scroll state every time the menu opens OR closes so the
     // first view always starts collapsed (25vh bottom quarter) and a
     // half-scrolled state doesn't linger after close.
