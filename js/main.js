@@ -604,17 +604,17 @@ function drawVignette(ctx, w, h) {
   // deliberate. Tuned so two to three trackpad ticks reach full expand.
   const MENU_EXPAND_DISTANCE = 420;
 
-  // Rubber-band overscroll — when the user pulls past the top or bottom
-  // of the scrollable range, only a fraction of their input is accepted
-  // (RESISTANCE), giving the list a "weighty" feel. On release, an
-  // underdamped spring pulls the offset back to 0 with a visible bounce.
-  // Feel-tuned: one clear bounce then settle, not rigid, not rubbery.
+  // Rubber-band overscroll — subtle feedback only. The previous values
+  // produced a long, rubbery oscillation at either edge; the new tune is
+  // critically-damped-ish, with ~40 px of travel and a single gentle
+  // settle so the user gets "you hit the edge" without a theatrical
+  // bounce.
   let menuOverscroll    = 0;  // current pixel offset past the edge
   let menuOverscrollVel = 0;  // spring velocity
-  const MENU_OVERSCROLL_RESISTANCE = 0.30;  // % of past-edge input accepted
-  const MENU_OVERSCROLL_SPRING     = 0.09;  // stiffness pulling back to 0
-  const MENU_OVERSCROLL_DAMP       = 0.82;  // velocity damping per frame
-  const MENU_OVERSCROLL_MAX        = 180;   // clamp so huge deltas don't launch it
+  const MENU_OVERSCROLL_RESISTANCE = 0.08;  // % of past-edge input accepted
+  const MENU_OVERSCROLL_SPRING     = 0.22;  // stiffer pull back to 0
+  const MENU_OVERSCROLL_DAMP       = 0.62;  // heavier damping — no oscillation
+  const MENU_OVERSCROLL_MAX        = 44;    // tight clamp; edge hint only
 
   // Route all scroll input through this so overscroll bounces kick in
   // automatically at either edge instead of a hard clamp.
