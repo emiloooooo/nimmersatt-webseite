@@ -60,7 +60,8 @@
   // Kein Voice-Cap, kein Cooldown — jede Geste spawnt eine eigene Source.
   // Überlappung ist gewollt ("Windspiel im Wind"), deshalb etwas leiseres
   // Grundgain, damit sich stapelnde Sources nicht aufsummieren ins Clipping.
-  const BASE_VOLUME = 0.22;
+  // -3 dB leiser als 0.22 → 0.22 × 10^(-3/20) ≈ 0.156.
+  const BASE_VOLUME = 0.156;
 
   async function ensureCtx() {
     if (!audioCtx) {
