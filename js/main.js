@@ -9,7 +9,7 @@ const PROJECTS = [
   {
     title: 'CHARLIEXCX - Moment (Premiere)',
     slug:  'brat',
-    body:  "Berlinale premiere, 24-hour turnaround. Club energy captured live, Cupra built in 3D with lighting matched to the room so the brand felt native to the moment.",
+    body:  "Berlinale premiere, 24-hour turnaround. Cupra built in 3D, lighting matched to the room.",
     description:
       'During the Berlinale premiere of "Moment," I was commissioned by a PR agency to capture the event\'s energy. The project expanded to include brand integration for Cupra, requiring a luxury aesthetic within a club setting.\n\n' +
       'Communication was difficult due to the environment, requiring a highly adaptive filming style. Since the vehicles were not on-site, we utilized 3D models and matched the club\'s lighting to generate assets that felt organic to the edit.\n\n' +
@@ -24,7 +24,7 @@ const PROJECTS = [
   {
     title: 'Stylo - Alles Gut (Short Film)',
     slug:  'berlin-klohaus',
-    body:  "A couple's story woven through Berlin's everyday life. Short drama built on invisible transitions and the quiet cues between people.",
+    body:  "A couple's story woven through Berlin. Short drama built on invisible transitions.",
     description: null,
     video: 'assets/Stylo - Alles Gut (Official Video).mp4',
     credits: [
@@ -43,7 +43,7 @@ const PROJECTS = [
   {
     title: '032c x CUPRA (Collaboration)',
     slug:  'paris',
-    body:  "Cupra meets Paris Fashion Week. The city as set, street tempo mixed with sharp brand lines — editorial and automotive in one frame.",
+    body:  "Cupra meets Paris Fashion Week. The city as set — editorial and automotive in one frame.",
     description: null,
     video: null,
     credits: [
@@ -55,7 +55,7 @@ const PROJECTS = [
   {
     title: "Marc O'Polo (Documentary)",
     slug:  'vietnam',
-    body:  "Mapping global transparency across continents. Authentic production conditions documented to Fair Wear Foundation standards, non-intrusive from capture to cut.",
+    body:  "Global transparency mapped across continents to Fair Wear Foundation standards.",
     description:
       'The objective was to provide visual evidence of Marc O\u2019Polo\u2019s supply chain transparency and their adherence to Fair Wear Foundation standards. The film aimed to document authentic production conditions for their sustainability report.\n\n' +
       'The production involved navigating large-scale industrial environments in a new global context. The challenge was documenting the facilities without disrupting their high-efficiency workflows, requiring a tactical and non-intrusive approach to cinematography.\n\n' +
@@ -70,7 +70,7 @@ const PROJECTS = [
   {
     title: 'miiraqt (Artist Identity)',
     slug:  'miira',
-    body:  "New-generation energy sampled from the past. Built for 3 Strikes with a thirty-minute feedback loop — the set's direct energy carried straight through to upload.",
+    body:  "New-generation energy sampled from the past. Built for 3 Strikes on a 30-minute turnaround.",
     description:
       'The connection for "3 Strikes" developed through a professional network that recognized the value of my previous work in the genre. The visuals were designed to support a heavy sample while highlighting the artist\'s position in a new generation of talent.\n\n' +
       'The atmosphere on set was defined by the artist\'s youth and fresh perspective. The collaboration was efficient and focused, allowing for a streamlined workflow that capitalized on the direct energy of the shoot.\n\n' +
@@ -85,7 +85,7 @@ const PROJECTS = [
   {
     title: 'SS26 (Berlin Fashion Week)',
     slug:  'berlin',
-    body:  'Four brands across two days. Full-service production at the legendary Funkturmpalais with Reference Studio — lighting, camera, crew and post.',
+    body:  'Four brands, two days. Funkturmpalais, produced with Reference Studio.',
     description: null,
     video: null,
     credits: [
@@ -97,7 +97,7 @@ const PROJECTS = [
   {
     title: 'FW26 (Berlin Fashion Week)',
     slug:  'garage',
-    body:  'Four brands across two days. Full-service production at the legendary Kant Garage with Reference Studio — lighting, camera, crew and post.',
+    body:  'Four brands, two days. Kant Garage, produced with Reference Studio.',
     description: null,
     video: null,
     credits: [
@@ -109,7 +109,7 @@ const PROJECTS = [
   {
     title: 'Whispers - WINTERGARTEN (Short Film)',
     slug:  'hermannplatz',
-    body:  'Berlin youth culture, a story of abuse and trauma. A patient, unflinching short film told close to the people it portrays — never over them.',
+    body:  'Berlin youth culture — a story of abuse and trauma, told close to the people it portrays.',
     description: null,
     video: 'assets/Whispers - WINTERGARTEN (prod. Flybea) - Official Short Music Film.mp4',
     credits: [
@@ -121,7 +121,7 @@ const PROJECTS = [
   {
     title: 'index® (Brand Identity)',
     slug:  'portugal',
-    body:  'Ten campaigns shipped in three months. Strategy, direction and a shared visual system scaled across print, screen and space.',
+    body:  'Ten campaigns shipped in three months. One visual system across print, screen and space.',
     description: null,
     videos: [
       'assets/INDEX® - KLEIDER MACHEN LEUTE.mp4',
@@ -140,7 +140,7 @@ const PROJECTS = [
   {
     title: 'Soyhan (Artist Identity)',
     slug:  'wedding',
-    body:  'Six million streams, viral rollout, three concerts and merchandise. A 2D visualizer built from a thousand images and fifty typefaces, synced to the rhythm.',
+    body:  'Six million streams. A 2D visualizer built from a thousand images and fifty typefaces.',
     description:
       'Stevie B from Berlin Wedding Pankstra\u00dfe.\n\n' +
       'Initiated through Universal Music, this project was part of a larger visual rollout for the artist\'s debut. The track required a 2D visualizer that utilized a heavy-asset workflow, a new technical direction for the production team.\n\n' +
@@ -156,7 +156,7 @@ const PROJECTS = [
   {
     title: 'Kleinstadt Uniques (Artist Identity)',
     slug:  'wolfsburg',
-    body:  'Blue Ice automotive aesthetic on a studio music video. A sharp, expensive look grounded in the raw energy of the track — polished, never staged.',
+    body:  'Blue Ice automotive aesthetic on a studio music video — polished, never staged.',
     description:
       'This collaboration aimed to apply the "Blue Ice" aesthetic of high-end automotive commercials to a studio-based music video. The goal was a sharp, expensive look that remained grounded in the energy of the track.\n\n' +
       'My role involved bridging the gap between technical planning and the spontaneous creative energy of the artists. It required maintaining the production\'s direction while allowing room for the artists to operate within their own creative flow.\n\n' +
@@ -171,7 +171,7 @@ const PROJECTS = [
   {
     title: 'The Benchmark (Commercial)',
     slug:  'said',
-    body:  "Defining the new benchmark for the industry. A Berlin stone setter's workshop turned cinematic — the film anchored the Benchalist stand at Inhorgenta Munich.",
+    body:  "A Berlin stone setter's workshop turned cinematic. Anchored the Benchalist stand at Inhorgenta Munich.",
     description:
       'The project was initiated as a strategic exchange between a Berlin-based stone setter and Benchalist. The objective was to document the technical precision of their specialized workbench within a professional workshop environment, providing the brand with high-end visual assets in exchange for the workstation.\n\n' +
       'Executed as a collaborative passion project, the production focused on the intimate details of the gemstone setting process. We transformed the workshop into a cinematic space, utilizing specific lighting and cinematography to highlight the synergy between the artisan\'s craft and the technical design of the furniture.\n\n' +
