@@ -67,6 +67,16 @@
         <!-- Video shown when a project.video path is present; otherwise
              hidden and the fallback below takes its place. -->
         <video class="player-modal__video" controls playsinline preload="metadata"></video>
+        <!-- Custom fullscreen toggle. Native video controls also offer
+             one, but iOS Safari routes fullscreen through a separate
+             webkitEnterFullscreen API that isn't hooked up when
+             playsinline is set. This button uses the correct call path
+             for every browser. -->
+        <button class="player-modal__fs" type="button" aria-label="Vollbild" data-fs>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="18" height="18">
+            <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
         <div class="player-modal__stage-fallback">
           <span class="player-modal__stage-label">Coming soon</span>
           <h2 class="player-modal__stage-title"></h2>

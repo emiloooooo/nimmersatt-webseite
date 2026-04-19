@@ -1111,7 +1111,32 @@ function drawVignette(ctx, w, h) {
   const playerCounter = playerModal.querySelector('.player-modal__counter');
   const playerCountI  = playerModal.querySelector('.player-modal__counter-index');
   const playerCountT  = playerModal.querySelector('.player-modal__counter-total');
+  const playerFs      = playerModal.querySelector('[data-fs]');
   let playerSnapshot = null;
+
+  // Fullscreen — native video controls already expose a button, but
+  // iOS Safari won't honour the standard requestFullscreen() while
+  // playsinline is set; it needs the webkit-specific call on the video
+  // element itself. This handler picks the right path per browser and
+  // fails silent on unsupported environments.
+  function enterVideoFullscreen() {
+    if (!playerVideo) return;
+    if (typeof playerVideo.webkitEnterFullscreen === 'function') {
+      try { playerVideo.webkitEnterFullscreen(); return; } catch (e) { /* ignore */ }
+    }
+    const el  = playerVideo;
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+    if (req) {
+      const p = req.call(el);
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    }
+  }
+  if (playerFs) {
+    playerFs.addEventListener('click', (e) => {
+      e.stopPropagation();
+      enterVideoFullscreen();
+    });
+  }
 
   // Carousel state — scoped to the currently-open project. 0 entries = no
   // video, 1 entry = no nav UI, 2+ entries = arrows + counter.

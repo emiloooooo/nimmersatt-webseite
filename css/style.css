@@ -467,6 +467,34 @@ html, body {
 }
 .player-modal__video.is-swapping { opacity: 0; }
 
+/* Custom fullscreen toggle overlayed on the stage, top-right. Sits
+   above the native controls so it's always reachable and routes
+   through the iOS-safe webkitEnterFullscreen path. */
+.player-modal__fs {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.7rem;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  color: #000;
+  cursor: pointer;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s ease, transform 0.18s ease;
+  -webkit-backdrop-filter: blur(4px);
+          backdrop-filter: blur(4px);
+}
+.player-modal__fs:hover {
+  background: #fff;
+  transform: scale(1.08);
+}
+.player-modal__fs svg { display: block; }
+
 /* Prev / next arrows for projects with multiple videos. Hidden by default
    (the [hidden] attribute); unhidden from JS when a project ships a
    videos[] array with more than one entry. Circular glass buttons that
