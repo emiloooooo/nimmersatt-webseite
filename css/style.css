@@ -427,13 +427,40 @@ html, body {
 .player-modal__backdrop {
   position: absolute;
   inset: 0;
-  /* Soft white wash with a heavier blur so the scroll scene is still
-     readable behind the modal — user keeps context of where they are
-     in the portfolio while engaging with the video. */
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(22px) saturate(1.1);
-  -webkit-backdrop-filter: blur(22px) saturate(1.1);
   cursor: pointer;
+}
+
+/* Two stacked backdrop layers — both sit inside the dialog but outside
+   the card — build a soft radial falloff from the sharp scroll scene
+   at the viewport corners to a fully blurred + softly tinted region
+   behind the card. The wider "soft" layer fades in first, the tighter
+   "deep" layer adds the remaining blur power only near the card. The
+   result: no hard edge where the backdrop meets the scene, just a
+   gentle transition. */
+.player-modal__backdrop::before,
+.player-modal__backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.player-modal__backdrop::before {
+  background: rgba(255, 255, 255, 0.30);
+  backdrop-filter: blur(10px) saturate(1.05);
+  -webkit-backdrop-filter: blur(10px) saturate(1.05);
+  -webkit-mask-image: radial-gradient(ellipse 110% 110% at center,
+                      #000 30%, rgba(0, 0, 0, 0.7) 65%, transparent 100%);
+          mask-image: radial-gradient(ellipse 110% 110% at center,
+                      #000 30%, rgba(0, 0, 0, 0.7) 65%, transparent 100%);
+}
+.player-modal__backdrop::after {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(22px) saturate(1.15);
+  -webkit-backdrop-filter: blur(22px) saturate(1.15);
+  -webkit-mask-image: radial-gradient(ellipse 80% 85% at center,
+                      #000 20%, rgba(0, 0, 0, 0.55) 60%, transparent 100%);
+          mask-image: radial-gradient(ellipse 80% 85% at center,
+                      #000 20%, rgba(0, 0, 0, 0.55) 60%, transparent 100%);
 }
 
 /* ── Player modal (redesigned) ──
