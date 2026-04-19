@@ -404,22 +404,17 @@ function getRenderState(globalPos, allowOverlap) {
   const primaryIdx   = Math.floor(wrapped / CYCLE_STEP);
   const primaryLocal = wrapped - primaryIdx * CYCLE_STEP;
 
-  // Crossfade window — render the PREVIOUS project on the fading layer
-  // while the emerging one is in its fade-in zone. Gated by
-  // allowOverlap (= hasAdvanced || currentPos < 0) so the very first
-  // load doesn't show a stray preview of PROJECTS[11] as the "previous"
-  // of PROJECTS[0]. Combined with mix-blend-mode: multiply on the
-  // foreground canvas in CSS, the white JPG backgrounds act effectively
-  // transparent and the two illustrations layer smoothly instead of
-  // one hard-cutting on top of the other.
-  let fading = null;
-  if (allowOverlap && primaryLocal < FADE_IN_END) {
-    const t           = primaryLocal / FADE_IN_END;                // 0 → 1
-    const fadingIdx   = mod(primaryIdx - 1, PROJECTS.length);
-    const fadeOutSpan = CONFIG.CYCLE_LEN - CONFIG.WHITE_FADE_FROM; // 0.60
-    const fadingLocal = CONFIG.WHITE_FADE_FROM + t * fadeOutSpan;
-    fading = { projectIdx: fadingIdx, localPos: fadingLocal };
-  }
+  // Crossfade intentionally disabled.
+  //
+  // Earlier versions rendered the PREVIOUS project on the bg canvas
+  // while the emerging project was in its fade-in zone (0 → FADE_IN_END).
+  // With OVERLAP = 0 that design re-showed a project that had ALREADY
+  // faded to white on the fg canvas — visible as a ghost of the previous
+  // clip popping back into view at every wrap, and doubled/tripled
+  // stacks when scrolling fast across multiple boundaries. Each project
+  // now handles its own fade in-to-white / out-from-white on the fg
+  // canvas alone, so transitions stay clean and single-image.
+  const fading = null;
 
   return {
     emerging: { projectIdx: primaryIdx, localPos: primaryLocal },
@@ -666,6 +661,26 @@ function drawVignette(ctx, w, h) {
   const LOADER_DURATION = 2800;
   const preloadStart = Date.now();
   let preloaderDismissed       = false;
+
+  // Force-kick the loader video. Chrome/Safari normally autoplay a muted
+  // <video> without intervention, but cached-HTML reloads and some mobile
+  // configurations silently pause it on first paint — the user then sees
+  // a blank white preloader instead of the animation. Calling play()
+  // explicitly after load (and swallowing the promise) makes the kick
+  // resilient across every autoplay-policy variant we've seen.
+  const preloaderVideo = preloader.querySelector('video');
+  if (preloaderVideo) {
+    const kickPlay = () => {
+      try {
+        const p = preloaderVideo.play();
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      } catch (e) { /* ignore */ }
+    };
+    if (preloaderVideo.readyState >= 2) kickPlay();
+    preloaderVideo.addEventListener('loadeddata',    kickPlay, { once: true });
+    preloaderVideo.addEventListener('canplay',       kickPlay, { once: true });
+    preloaderVideo.addEventListener('canplaythrough',kickPlay, { once: true });
+  }
   // Separate flag from isReady: the scene must also be VISUALLY emerged
   // before we allow the click-to-open-player gesture. Otherwise users
   // can accidentally tap the player open while the preloader is still

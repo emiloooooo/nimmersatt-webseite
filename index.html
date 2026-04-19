@@ -7,18 +7,22 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rock+3D&family=Martian+Mono:wght@300;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=28">
+  <link rel="stylesheet" href="css/style.css?v=29">
   <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 </head>
 <body>
 
-  <!-- Preloader -->
+  <!-- Preloader. MP4 source is listed first: some iOS / Safari versions
+       silently refuse to play .webm even though they report support for
+       it, which caused the loader clip to stay frozen on a blank white
+       screen. Ordering MP4 first gives every browser a source it can
+       actually decode, and keeps WebM as the optional fallback. -->
   <div class="preloader" id="preloader">
-    <video class="preloader__video" autoplay muted loop playsinline>
-      <source src="assets/loader.webm" type="video/webm">
+    <video class="preloader__video" autoplay muted loop playsinline preload="auto">
       <source src="assets/loader.mp4" type="video/mp4">
+      <source src="assets/loader.webm" type="video/webm">
     </video>
   </div>
 
@@ -105,7 +109,7 @@
     </article>
   </div>
 
-  <script src="js/main.js?v=45"></script>
+  <script src="js/main.js?v=46"></script>
   <script src="js/chime.js?v=8"></script>
 </body>
 </html>

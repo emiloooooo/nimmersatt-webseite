@@ -63,10 +63,10 @@ html, body {
   height: 100%;
   transform-origin: center center;
   opacity: 0;
-  /* +15 % saturation across every project — pushes colour without
+  /* +38 % saturation across every project — pushes colour without
      touching contrast or hue. GPU-composited so it's free per frame. */
-  filter: saturate(1.15);
-  -webkit-filter: saturate(1.15);
+  filter: saturate(1.38);
+  -webkit-filter: saturate(1.38);
   will-change: transform, opacity, filter;
 }
 
