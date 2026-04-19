@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rock+3D&family=Martian+Mono:wght@300;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=33">
+  <link rel="stylesheet" href="css/style.css?v=34">
   <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -84,6 +84,12 @@
         <!-- Video shown when a project.video path is present; otherwise
              hidden and the fallback below takes its place. -->
         <video class="player-modal__video" controls playsinline preload="metadata"></video>
+        <!-- Loading overlay — shows the loader GIF while a clip is
+             fetching, so switching between INDEX carousel videos
+             doesn't leave a dark rectangle. Toggled via .is-active. -->
+        <div class="player-modal__loading" aria-hidden="true">
+          <img src="assets/loader.gif?v=2" alt="">
+        </div>
         <!-- Custom fullscreen toggle. Native video controls also offer
              one, but iOS Safari routes fullscreen through a separate
              webkitEnterFullscreen API that isn't hooked up when
@@ -121,7 +127,7 @@
     </article>
   </div>
 
-  <script src="js/main.js?v=55"></script>
+  <script src="js/main.js?v=56"></script>
   <script src="js/chime.js?v=9"></script>
 </body>
 </html>

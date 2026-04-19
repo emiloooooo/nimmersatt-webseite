@@ -1149,6 +1149,7 @@ function drawVignette(ctx, w, h) {
   const playerCredit  = playerModal.querySelector('.player-modal__credits');
   const playerVideo   = playerModal.querySelector('.player-modal__video');
   const playerFall    = playerModal.querySelector('.player-modal__stage-fallback');
+  const playerLoading = playerModal.querySelector('.player-modal__loading');
   const playerNavPrev = playerModal.querySelector('.player-modal__nav--prev');
   const playerNavNext = playerModal.querySelector('.player-modal__nav--next');
   const playerCounter = playerModal.querySelector('.player-modal__counter');
@@ -1194,6 +1195,9 @@ function drawVignette(ctx, w, h) {
     return path.split('/').map((seg, i) => i === 0 ? seg : encodeURIComponent(seg)).join('/');
   };
 
+  function showLoading() { if (playerLoading) playerLoading.classList.add('is-active'); }
+  function hideLoading() { if (playerLoading) playerLoading.classList.remove('is-active'); }
+
   function setStageVideo(src, { fade } = { fade: false }) {
     if (!playerVideo) return;
     const apply = () => {
@@ -1206,10 +1210,19 @@ function drawVignette(ctx, w, h) {
       };
       const onReady = () => {
         playerVideo.classList.remove('is-swapping');
+        hideLoading();
         tryPlay();
       };
+      // Show the loader GIF overlay until the incoming clip is decodable.
+      // `loadeddata` is the earliest event at which the first frame is
+      // renderable; `canplay` is a safety fallback for browsers that
+      // fire the events out of the spec order on slow networks.
+      showLoading();
       if (playerVideo.readyState >= 2) onReady();
-      else playerVideo.addEventListener('loadeddata', onReady, { once: true });
+      else {
+        playerVideo.addEventListener('loadeddata', onReady, { once: true });
+        playerVideo.addEventListener('canplay',    onReady, { once: true });
+      }
     };
     try { playerVideo.pause(); } catch (e) { /* ignore */ }
     if (fade) {
@@ -1276,6 +1289,7 @@ function drawVignette(ctx, w, h) {
         playerVideo.removeAttribute('src');
         playerVideo.style.display = 'none';
         playerFall.style.display  = '';
+        hideLoading();
       }
     }
     updateNavUI();
@@ -1323,6 +1337,7 @@ function drawVignette(ctx, w, h) {
     playerModal.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('is-player-open');
     updateProjectNavVisibility();
+    hideLoading();
     // Stop any playing video so audio doesn't continue behind the
     // scroll-scene after the modal closes.
     if (playerVideo) {
