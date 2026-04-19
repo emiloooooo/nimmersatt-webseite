@@ -455,10 +455,11 @@ html, body {
   margin: auto;
   top: 50%;
   transform: translateY(-50%) scale(0.965);
-  /* Warm off-white card body. No drop shadow — the backdrop-blur on
+  /* Soft neutral grey card body — cooler than cream, still warm enough
+     to avoid clinical. No drop shadow; the backdrop-blur on
      .player-modal__backdrop already separates the card from the scene
-     behind it; an extra shadow just adds visual noise. */
-  background: #fdfcf9;
+     behind it. */
+  background: #ececed;
   color: #0a0a0a;
   border-radius: 20px;
   overflow: hidden;
