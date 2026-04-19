@@ -605,31 +605,37 @@ function drawVignette(ctx, w, h) {
   // deliberate. Tuned so two to three trackpad ticks reach full expand.
   const MENU_EXPAND_DISTANCE = 420;
 
-  // Rubber-band overscroll — subtle feedback only. The previous values
-  // produced a long, rubbery oscillation at either edge; the new tune is
-  // critically-damped-ish, with ~40 px of travel and a single gentle
-  // settle so the user gets "you hit the edge" without a theatrical
-  // bounce.
-  let menuOverscroll    = 0;  // current pixel offset past the edge
-  let menuOverscrollVel = 0;  // spring velocity
-  const MENU_OVERSCROLL_RESISTANCE = 0.08;  // % of past-edge input accepted
-  const MENU_OVERSCROLL_SPRING     = 0.22;  // stiffer pull back to 0
-  const MENU_OVERSCROLL_DAMP       = 0.62;  // heavier damping — no oscillation
-  const MENU_OVERSCROLL_MAX        = 44;    // tight clamp; edge hint only
+  // Rubber-band overscroll — a quiet edge hint, nothing more. Pulling
+  // past either edge pushes the list a few px in the direction of the
+  // gesture, with a tapered resistance so further pulls have less
+  // effect as we approach MAX. Release is a straight exponential ease
+  // back to 0 — no spring, no velocity, no bounce. That was the
+  // "hoch und runter bouncen" the user called out: the earlier
+  // underdamped spring oscillated noticeably when released after a
+  // long scroll. The decay here goes one way, once.
+  let menuOverscroll = 0;  // current pixel offset past the edge
+  const MENU_OVERSCROLL_RESISTANCE = 0.09;  // % of past-edge input accepted (tapered below)
+  const MENU_OVERSCROLL_DECAY      = 0.86;  // per-frame ease back to 0
+  const MENU_OVERSCROLL_MAX        = 40;    // tight clamp; edge hint only
 
-  // Route all scroll input through this so overscroll bounces kick in
-  // automatically at either edge instead of a hard clamp.
+  // Route all scroll input through this so overscroll kicks in
+  // automatically at either edge instead of a hard clamp. Resistance is
+  // tapered by how much overscroll we've already accumulated, so the
+  // approach to MAX feels asymptotic instead of linear — each additional
+  // pull reaches less far, matching the physical feeling of a rubber
+  // band stretching.
   function pushMenuScroll(delta) {
     const max = menuMaxScrollRef.fn ? menuMaxScrollRef.fn() : 0;
     const proposed = menuScrollTarget + delta;
+    const taper = () => Math.max(0, 1 - Math.abs(menuOverscroll) / MENU_OVERSCROLL_MAX);
     if (proposed > max) {
       const excess = proposed - max;
-      menuOverscroll += excess * MENU_OVERSCROLL_RESISTANCE;
+      menuOverscroll += excess * MENU_OVERSCROLL_RESISTANCE * taper();
       if (menuOverscroll >  MENU_OVERSCROLL_MAX) menuOverscroll =  MENU_OVERSCROLL_MAX;
       menuScrollTarget = max;
     } else if (proposed < 0) {
       const excess = proposed; // negative
-      menuOverscroll += excess * MENU_OVERSCROLL_RESISTANCE;
+      menuOverscroll += excess * MENU_OVERSCROLL_RESISTANCE * taper();
       if (menuOverscroll < -MENU_OVERSCROLL_MAX) menuOverscroll = -MENU_OVERSCROLL_MAX;
       menuScrollTarget = 0;
     } else {
@@ -1113,15 +1119,14 @@ function drawVignette(ctx, w, h) {
         menuScrollCurrent = menuScrollTarget;
       }
 
-      // Overscroll spring — underdamped oscillation back to 0. Gives
-      // the "weighty bounce" feel at the edges without a hard stop.
-      menuOverscrollVel += -menuOverscroll * MENU_OVERSCROLL_SPRING;
-      menuOverscrollVel *= MENU_OVERSCROLL_DAMP;
-      menuOverscroll    += menuOverscrollVel;
-      if (Math.abs(menuOverscroll) < 0.08 && Math.abs(menuOverscrollVel) < 0.08) {
-        menuOverscroll = 0;
-        menuOverscrollVel = 0;
-      }
+      // Overscroll release — straight exponential decay back to 0. No
+      // spring, no velocity, so the list glides back once without the
+      // up-and-down bounce the earlier spring produced at the end of a
+      // long scroll. The decay rate stays the same whether we just
+      // nudged the edge or we're releasing from MAX, so long pulls
+      // ease back proportionally longer without oscillating.
+      menuOverscroll *= MENU_OVERSCROLL_DECAY;
+      if (Math.abs(menuOverscroll) < 0.2) menuOverscroll = 0;
 
       const expandPx    = Math.min(menuScrollCurrent, MENU_EXPAND_DISTANCE);
       const expandRatio = MENU_EXPAND_DISTANCE > 0 ? expandPx / MENU_EXPAND_DISTANCE : 0;
@@ -1380,7 +1385,6 @@ function drawVignette(ctx, w, h) {
     menuScrollTarget  = 0;
     menuScrollCurrent = 0;
     menuOverscroll    = 0;
-    menuOverscrollVel = 0;
     menu.style.setProperty('--menu-expand', '0');
     if (menuList) {
       menuList.style.transform = 'translate3d(0, 0, 0)';
