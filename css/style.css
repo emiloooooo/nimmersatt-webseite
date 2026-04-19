@@ -43,13 +43,15 @@ html, body {
   pointer-events: none;
 }
 
-.preloader__video {
+.preloader__media {
   width: clamp(260px, 42vw, 560px);
   height: auto;
   display: block;
-  /* Let every click bubble to .preloader — the <video> element
+  /* Let every click bubble to .preloader — the media element
      shouldn't intercept taps that are meant to skip the intro. */
   pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 /* ── Canvases ──

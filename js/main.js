@@ -14,7 +14,7 @@ const PROJECTS = [
       'During the Berlinale premiere of "Moment," I was commissioned by a PR agency to capture the event\'s energy. The project expanded to include brand integration for Cupra, requiring a luxury aesthetic within a club setting.\n\n' +
       'Communication was difficult due to the environment, requiring a highly adaptive filming style. Since the vehicles were not on-site, we utilized 3D models and matched the club\'s lighting to generate assets that felt organic to the edit.\n\n' +
       'The project followed a strict 24-hour turnaround in February 2026. From the initial shoot to the final 3D-integrated delivery, the timeline was optimized to meet the peak interest of the Berlinale week.',
-    video: 'assets/Charli Xcx Recap Full.mp4',
+    video: 'https://github.com/emiloooooo/nimmersatt-webseite/releases/download/videos-v1/Charli.Xcx.Recap.Full.mp4',
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
       { label: 'Location',  value: 'Berlin' },
@@ -26,7 +26,7 @@ const PROJECTS = [
     slug:  'berlin-klohaus',
     body:  "A couple's story threaded through Berlin's everyday life, told as a short drama built on invisible transitions where the quiet moments carry the narrative.",
     description: null,
-    video: 'assets/Stylo - Alles Gut (Official Video).mp4',
+    video: 'https://github.com/emiloooooo/nimmersatt-webseite/releases/download/videos-v1/Stylo.-.Alles.Gut.Official.Video.mp4',
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
       { label: 'Location',  value: 'Berlin' },
@@ -60,7 +60,7 @@ const PROJECTS = [
       'The objective was to provide visual evidence of Marc O\u2019Polo\u2019s supply chain transparency and their adherence to Fair Wear Foundation standards. The film aimed to document authentic production conditions for their sustainability report.\n\n' +
       'The production involved navigating large-scale industrial environments in a new global context. The challenge was documenting the facilities without disrupting their high-efficiency workflows, requiring a tactical and non-intrusive approach to cinematography.\n\n' +
       'In October 2024, the team traveled internationally to multiple sites. The resulting footage was processed to meet the launch of the brand\u2019s sustainability campaign, requiring a highly organized workflow from field capture to final cut.',
-    video: "assets/Marc O'Polo - Fair Wear Foundation.mp4",
+    video: 'https://github.com/emiloooooo/nimmersatt-webseite/releases/download/videos-v1/Marc.O.Polo.-.Fair.Wear.Foundation.mp4',
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
       { label: 'Location',  value: 'Global' },
@@ -75,7 +75,7 @@ const PROJECTS = [
       'The connection for "3 Strikes" developed through a professional network that recognized the value of my previous work in the genre. The visuals were designed to support a heavy sample while highlighting the artist\'s position in a new generation of talent.\n\n' +
       'The atmosphere on set was defined by the artist\'s youth and fresh perspective. The collaboration was efficient and focused, allowing for a streamlined workflow that capitalized on the direct energy of the shoot.\n\n' +
       'In September 2025, the project was defined by its speed of execution. After submitting the initial edit, a thirty-minute feedback loop led directly to the final upload, demonstrating a highly effective production cycle.',
-    video: 'assets/3STRIKES COLOR FULL.mp4',
+    video: 'https://github.com/emiloooooo/nimmersatt-webseite/releases/download/videos-v1/3STRIKES.COLOR.FULL.mp4',
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
       { label: 'Location',  value: 'Berlin' },
@@ -111,7 +111,7 @@ const PROJECTS = [
     slug:  'hermannplatz',
     body:  'Following Berlin youth culture through a story of abuse and trauma, a patient, unflinching short film told close to the people it portrays rather than over them.',
     description: null,
-    video: 'assets/Whispers - WINTERGARTEN (prod. Flybea) - Official Short Music Film.mp4',
+    video: 'https://github.com/emiloooooo/nimmersatt-webseite/releases/download/videos-v1/Whispers.-.WINTERGARTEN.prod.Flybea.-.Official.Short.Music.Film.mp4',
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
       { label: 'Location',  value: 'Berlin' },
@@ -124,12 +124,12 @@ const PROJECTS = [
     body:  'Brand development, strategy and supervision across ten campaigns shipped in three months, grounded in one shared visual system that scaled across print, screen and space.',
     description: null,
     videos: [
-      'assets/INDEX® - KLEIDER MACHEN LEUTE.mp4',
-      'assets/INDEX® - NOS004.mp4',
-      'assets/INDEX® 000014.mp4',
-      'assets/INDEX® 000018.mp4',
-      'assets/INDEX® 000020.mp4',
-      'assets/INDEX® 000022.mp4',
+      'https://github.com/emiloooooo/nimmersatt-webseite/releases/download/videos-v1/INDEX.-.KLEIDER.MACHEN.LEUTE.mp4',
+      'https://github.com/emiloooooo/nimmersatt-webseite/releases/download/videos-v1/INDEX.-.NOS004.mp4',
+      'https://github.com/emiloooooo/nimmersatt-webseite/releases/download/videos-v1/INDEX.000014.mp4',
+      'https://github.com/emiloooooo/nimmersatt-webseite/releases/download/videos-v1/INDEX.000018.mp4',
+      'https://github.com/emiloooooo/nimmersatt-webseite/releases/download/videos-v1/INDEX.000020.mp4',
+      'https://github.com/emiloooooo/nimmersatt-webseite/releases/download/videos-v1/INDEX.000022.mp4',
     ],
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
@@ -161,7 +161,7 @@ const PROJECTS = [
       'This collaboration aimed to apply the "Blue Ice" aesthetic of high-end automotive commercials to a studio-based music video. The goal was a sharp, expensive look that remained grounded in the energy of the track.\n\n' +
       'My role involved bridging the gap between technical planning and the spontaneous creative energy of the artists. It required maintaining the production\'s direction while allowing room for the artists to operate within their own creative flow.\n\n' +
       'Released in August 2025, the project focused on maintaining high production standards within a relaxed studio environment. The challenge was ensuring a polished final product that successfully mirrored luxury commercial standards.',
-    video: 'assets/Dante YN - Eine Mak, Zwei Pints (ft. Nibor).mp4',
+    video: 'https://github.com/emiloooooo/nimmersatt-webseite/releases/download/videos-v1/Dante.YN.-.Eine.Mak.Zwei.Pints.ft.Nibor.mp4',
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
       { label: 'Location',  value: 'Wolfsburg' },
@@ -176,7 +176,7 @@ const PROJECTS = [
       'The project was initiated as a strategic exchange between a Berlin-based stone setter and Benchalist. The objective was to document the technical precision of their specialized workbench within a professional workshop environment, providing the brand with high-end visual assets in exchange for the workstation.\n\n' +
       'Executed as a collaborative passion project, the production focused on the intimate details of the gemstone setting process. We transformed the workshop into a cinematic space, utilizing specific lighting and cinematography to highlight the synergy between the artisan\'s craft and the technical design of the furniture.\n\n' +
       'Completed in February 2026, the delivery was specifically timed for the Inhorgenta trade fair in Munich. The final film served as the visual centerpiece for the Benchalist exhibition stand, presented on a full-screen display to an international industry audience.',
-    video: 'assets/BENCHALIST - The Benchmark.mp4',
+    video: 'https://github.com/emiloooooo/nimmersatt-webseite/releases/download/videos-v1/BENCHALIST.-.The.Benchmark.mp4',
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
       { label: 'Location',  value: 'Munich' },
@@ -662,42 +662,8 @@ function drawVignette(ctx, w, h) {
   const preloadStart = Date.now();
   let preloaderDismissed       = false;
 
-  // Force-kick the loader video. Chrome / Safari normally autoplay a
-  // muted <video> without intervention, but cached reloads, mobile power
-  // savers and some third-party extensions silently pause it on first
-  // paint — the user then sees a blank white preloader instead of the
-  // animation. The fix below runs play() on every meaningful lifecycle
-  // event AND on a brief poll for the first ~2.5 s, so even a browser
-  // that blocks the first call catches the next one. Every call
-  // swallows its rejected promise so autoplay-policy noise never
-  // surfaces.
-  const preloaderVideo = preloader.querySelector('video');
-  if (preloaderVideo) {
-    preloaderVideo.muted        = true;
-    preloaderVideo.defaultMuted = true;
-    preloaderVideo.playsInline  = true;
-    const kickPlay = () => {
-      if (!preloaderVideo.paused) return;
-      try {
-        const p = preloaderVideo.play();
-        if (p && typeof p.catch === 'function') p.catch(() => {});
-      } catch (e) { /* ignore */ }
-    };
-    kickPlay();
-    ['loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough', 'suspend']
-      .forEach((evt) => preloaderVideo.addEventListener(evt, kickPlay));
-    // Safety net — retry every 120 ms for the first 2.5 s. Cheap, and
-    // cleans itself up when the preloader is dismissed or playback is
-    // underway.
-    const kickTimer = setInterval(() => {
-      if (preloaderDismissed || !preloaderVideo.paused) {
-        clearInterval(kickTimer);
-        return;
-      }
-      kickPlay();
-    }, 120);
-    setTimeout(() => clearInterval(kickTimer), 2600);
-  }
+  // Loader is now a GIF — browsers auto-animate images without
+  // autoplay-policy gymnastics, so no play()/kick logic is needed.
   // Separate flag from isReady: the scene must also be VISUALLY emerged
   // before we allow the click-to-open-player gesture. Otherwise users
   // can accidentally tap the player open while the preloader is still
@@ -1173,8 +1139,13 @@ function drawVignette(ctx, w, h) {
   let videoList = [];
   let videoIdx  = 0;
 
-  // Encode each path segment so spaces, (), apostrophes and ® survive.
-  const encodeSrc = (path) => path.split('/').map((seg, i) => i === 0 ? seg : encodeURIComponent(seg)).join('/');
+  // Pass absolute URLs through untouched — they're already valid and
+  // shouldn't be re-encoded. For relative paths, encode each segment so
+  // spaces, (), apostrophes and ® survive to the server.
+  const encodeSrc = (path) => {
+    if (/^https?:\/\//i.test(path)) return path;
+    return path.split('/').map((seg, i) => i === 0 ? seg : encodeURIComponent(seg)).join('/');
+  };
 
   function setStageVideo(src, { fade } = { fade: false }) {
     if (!playerVideo) return;

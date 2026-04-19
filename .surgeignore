@@ -11,24 +11,14 @@ assets/*.mov
 assets/*.mkv
 assets/*.MP4
 assets/*.MOV
-# Re-include files that ARE referenced from the live site — preloader
-# clip, logo, and every project video linked from PROJECTS in js/main.js.
+# Re-include only the preloader clip and the logo. Project videos are
+# hosted as GitHub Release assets at
+# https://github.com/emiloooooo/nimmersatt-webseite/releases/tag/videos-v1
+# and loaded from those URLs by the player, so shipping them in the
+# Surge bundle would just bloat deploys without benefit.
 !assets/loader.mp4
 !assets/loader.webm
 !assets/logo.svg
-!assets/Charli Xcx Recap Full.mp4
-!assets/Stylo - Alles Gut (Official Video).mp4
-!assets/Marc O'Polo - Fair Wear Foundation.mp4
-!assets/3STRIKES COLOR FULL.mp4
-!assets/Whispers - WINTERGARTEN (prod. Flybea) - Official Short Music Film.mp4
-!assets/INDEX® - KLEIDER MACHEN LEUTE.mp4
-!assets/INDEX® - NOS004.mp4
-!assets/INDEX® 000014.mp4
-!assets/INDEX® 000018.mp4
-!assets/INDEX® 000020.mp4
-!assets/INDEX® 000022.mp4
-!assets/BENCHALIST - The Benchmark.mp4
-!assets/Dante YN - Eine Mak, Zwei Pints (ft. Nibor).mp4
 
 # Folders that held reference clips with spaces or special chars
 assets/BL00d+T3Arz+F@Ll! (filler)

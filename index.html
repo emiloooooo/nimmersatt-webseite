@@ -10,23 +10,20 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rock+3D&family=Martian+Mono:wght@300;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=31">
+  <link rel="stylesheet" href="css/style.css?v=32">
   <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 </head>
 <body>
 
-  <!-- Preloader. MP4 source is listed first: some iOS / Safari versions
-       silently refuse to play .webm even though they report support for
-       it, which caused the loader clip to stay frozen on a blank white
-       screen. Ordering MP4 first gives every browser a source it can
-       actually decode, and keeps WebM as the optional fallback. -->
+  <!-- Preloader: the loader.mp4 frame sequence was converted to a GIF so
+       every browser / autoplay policy simply plays it on paint. The
+       overlay is still skippable on click (see js/main.js
+       skipPreloader()), and auto-dismisses once frames are ready plus
+       a LOADER_DURATION minimum. -->
   <div class="preloader" id="preloader">
-    <video class="preloader__video" autoplay muted loop playsinline preload="auto">
-      <source src="assets/loader.mp4" type="video/mp4">
-      <source src="assets/loader.webm" type="video/webm">
-    </video>
+    <img class="preloader__media" src="assets/loader.gif?v=1" alt="Nimmersatt">
   </div>
 
   <!-- Logo: oben rechts (toggle Menu) -->
@@ -111,7 +108,7 @@
     </article>
   </div>
 
-  <script src="js/main.js?v=51"></script>
+  <script src="js/main.js?v=53"></script>
   <script src="js/chime.js?v=9"></script>
 </body>
 </html>
