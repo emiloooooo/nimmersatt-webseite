@@ -1,0 +1,49 @@
+# Locally stored raw renders — not part of the published site
+assets/Render_*
+assets/Rendering_*
+
+# Unreferenced source videos in assets/ — the live site only plays the
+# frame-sequence JPGs under frames/<slug>/. Keep the reference clips
+# locally but never ship them. Whitelist loader.* + logo.svg explicitly
+# because those ARE referenced from index.html.
+assets/*.mp4
+assets/*.mov
+assets/*.mkv
+assets/*.MP4
+assets/*.MOV
+# Re-include files that ARE referenced from the live site — preloader
+# clip, logo, and every project video linked from PROJECTS in js/main.js.
+!assets/loader.mp4
+!assets/loader.webm
+!assets/logo.svg
+!assets/Charli Xcx Recap Full.mp4
+!assets/Stylo - Alles Gut (Official Video).mp4
+!assets/Marc O'Polo - Fair Wear Foundation.mp4
+!assets/3STRIKES COLOR FULL.mp4
+!assets/Whispers - WINTERGARTEN (prod. Flybea) - Official Short Music Film.mp4
+!assets/INDEX® - KLEIDER MACHEN LEUTE.mp4
+!assets/BENCHALIST - The Benchmark.mp4
+!assets/Dante YN - Eine Mak, Zwei Pints (ft. Nibor).mp4
+
+# Folders that held reference clips with spaces or special chars
+assets/BL00d+T3Arz+F@Ll! (filler)
+
+# System / editor noise
+.DS_Store
+.claude/
+.git/
+node_modules/
+
+# Legacy top-level placeholder frames — superseded by frames/<slug>/ per-section sequences
+frames/frame0*.jpg
+
+# Local working folders / scripts
+assets/Nimmersatt Ton.mp3
+video/
+frames/**/*.psd
+extract-frames.sh
+convert-frames.sh
+png-to-svg.py
+claude.md
+CLAUDE.md
+_deploy.sh

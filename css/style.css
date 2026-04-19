@@ -1,0 +1,775 @@
+/* ─────────────────────────────────────────────
+   NIMMERSATT — Scroll-driven Frame Sequence
+   ───────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+  /* touch-action intentionally NOT set at the root — `touch-action: none`
+     here broke the mobile layout (disabled all gesture handling including
+     inside scroll containers). The scene's wheel/touch handlers already
+     call preventDefault() themselves, and internal scrollers opt in to
+     touch-action:pan-y individually. overscroll-behavior stops chaining. */
+  overscroll-behavior: none;
+}
+
+/* ── Preloader ── */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Skippable on click/tap — JS wires a one-shot listener that dismisses
+     the overlay early. The pointer cursor is the visual affordance. */
+  cursor: pointer;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+}
+
+.preloader.is-done {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.preloader__video {
+  width: clamp(160px, 22vw, 340px);
+  height: auto;
+  display: block;
+  /* Let every click bubble to .preloader — the <video> element
+     shouldn't intercept taps that are meant to skip the intro. */
+  pointer-events: none;
+}
+
+/* ── Canvases ──
+   bg-canvas = fading (secondary) project, below white overlay.
+   fg-canvas = emerging/current (primary) project, above white overlay.
+   alpha: true → transparente Kanten zeigen den weißen body-Hintergrund.  */
+#bg-canvas, #fg-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+  opacity: 0;
+  /* +15 % saturation across every project — pushes colour without
+     touching contrast or hue. GPU-composited so it's free per frame. */
+  filter: saturate(1.15);
+  -webkit-filter: saturate(1.15);
+  will-change: transform, opacity, filter;
+}
+
+#bg-canvas { z-index: 1; }
+#fg-canvas {
+  z-index: 4;
+  transition: opacity 0.6s ease;
+  /* multiply makes the white JPG background act as see-through — the
+     previous project's illustration on the bg canvas shows up underneath
+     in the transition zone, producing the layered PNG-like crossfade. */
+  mix-blend-mode: multiply;
+}
+
+#fg-canvas.is-loaded, #bg-canvas.is-loaded {
+  opacity: 1;
+}
+
+/* ── Text-Overlays ──
+   Breite = 100vw → transform-origin: top center liegt exakt bei 50vw.
+   Das ist der Pivot-Punkt: Text und Canvas skalieren vom selben Ursprung.
+   JS setzt nur top + scale — kein horizontales Verschieben nötig.        */
+.text-anchor {
+  position: fixed;
+  left: 50%;
+  transform-origin: top center;
+  opacity: 0;
+  /* Anchor and title stay click-through; only .text-body opts in to events
+     so long descriptions can scroll internally without blocking the
+     underlying click-to-open-player gesture. */
+  pointer-events: none;
+  will-change: transform, opacity;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+  translate: -50% 0;
+}
+
+#text-bg { z-index: 2; }
+#text-fg { z-index: 5; }
+
+.text-title {
+  font-family: 'Rock 3D', sans-serif;
+  font-size: 5.44vw;
+  line-height: 1;
+  color: #000;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.text-body {
+  font-family: 'Martian Mono', monospace;
+  font-weight: 600;
+  font-size: 1.39vw;
+  line-height: 1.8;
+  color: #000;
+  margin-top: 6.7vw;
+  width: 81vw;
+  /* pre-line preserves the \n newlines coming from project.body so
+     bullet lists and paragraph breaks render as authored. */
+  white-space: pre-line;
+  text-align: left;
+  /* Constrain to roughly the top third of the scene area so long bodies
+     don't push off-screen. Overflow scrolls INSIDE this container only —
+     overscroll-behavior: contain stops the scroll from chaining to the
+     frame-scrub (page) scroll. touch-action: pan-y re-enables vertical
+     touch scrolling here specifically. */
+  max-height: 32vh;
+  overflow-y: auto;
+  pointer-events: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.22) transparent;
+}
+
+.text-body::-webkit-scrollbar {
+  width: 4px;
+}
+.text-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.text-body::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.22);
+  border-radius: 2px;
+}
+.text-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.38);
+}
+
+/* ── Logo-Button oben rechts ── */
+.logo-btn {
+  position: fixed;
+  top: clamp(1rem, 2.5vw, 2.5rem);
+  right: clamp(1rem, 2.5vw, 2.5rem);
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  z-index: 1001;
+  line-height: 0;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.logo-btn:hover { transform: scale(1.05); }
+.logo-btn.is-open { transform: rotate(8deg) scale(0.95); }
+
+.logo {
+  display: block;
+  width: clamp(48px, 5vw, 72px);
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ── Dropdown-Menü mit Blur-Overlay ── */
+.menu {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  /* Edge spacing mirrors the logo's top/right corner offset so the text
+     block and the logo read as parts of the same grid. */
+  padding-left: clamp(1rem, 2.5vw, 2.5rem);
+  padding-bottom: clamp(1rem, 2.5vw, 2.5rem);
+  padding-right: clamp(1rem, 2.5vw, 2.5rem);
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.menu.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Scroll-driven expanding viewport.
+   – Starts at 25vh (one quarter), bottom-anchored on screen.
+   – Scrolling inside the menu grows max-height upward toward 80vh so
+     MORE items become visible and the block physically rises on screen
+     ("texts pushed up, more space occupied"). The CSS variable
+     --menu-expand is written by JS (0 → 1, eased).
+   – Once fully expanded, if the list is still taller than 80vh, JS
+     switches to translating the list upward (phase-2 scroll) so the
+     remaining items can still be reached.
+   – No visible scrollbar anywhere: overflow stays hidden, JS handles
+     all motion.
+   – Items are top-anchored inside the viewport (default flex flow) so
+     as the viewport grows, items travel up with its rising top edge
+     and new items reveal at the bottom. Matches the UX ask: scrolling
+     down pushes texts up; scrolling back up returns them to rest. */
+.menu__viewport {
+  position: relative;
+  /* 25vh collapsed → 92vh fully expanded (nearly full screen, leaving
+     only the logo corner). 14 items comfortably fit at this size so the
+     first item never gets clipped at the top edge. */
+  max-height: calc(25vh + 67vh * var(--menu-expand, 0));
+  overflow: hidden;
+  /* Soft bottom fade so newly-revealed items emerge without a hard edge.
+     No top fade — top items are stable and deserve full presence.  */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 calc(100% - 22px),
+    transparent 100%
+  );
+          mask-image: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 calc(100% - 22px),
+    transparent 100%
+  );
+}
+
+.menu__list {
+  list-style: none;
+  margin: 0;
+  /* Right padding absorbs the 1.04× chime-pulse so items don't clip at
+     the container edge. Left padding leaves room for the pulse's
+     letter-spacing expansion. Bottom padding matches the viewport's
+     22 px bottom fade so the last item reads cleanly through the fade. */
+  padding: 4px 1.4rem 22px 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35em;
+  /* JS writes translate3d(0, -y, 0) here for phase-2 overflow scroll.
+     Declare the initial transform + will-change so the first frame is
+     on the GPU layer and layout doesn't hitch on first input. */
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+/* Legacy entries share all menu-item styling — no visual differentiation
+   by default. Hook kept in case we want to treat them differently later. */
+.menu__item--legacy { }
+
+.menu__item {
+  font-family: 'Martian Mono', monospace;
+  font-weight: 300;
+  font-size: clamp(1.1rem, 2.1vw, 2rem);
+  line-height: 1.25;
+  color: #000;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  display: inline-block;
+  transform-origin: left center;
+  will-change: transform, letter-spacing, font-weight;
+  transition:
+    font-weight 180ms ease-out,
+    font-variation-settings 180ms ease-out,
+    letter-spacing 180ms ease-out,
+    transform 180ms ease-out;
+  font-variation-settings: 'wght' 300;
+}
+
+.menu__item:hover,
+.menu__item:focus-visible {
+  font-weight: 700;
+  font-variation-settings: 'wght' 700;
+  outline: none;
+}
+
+/* Chime-Pulse — schneller Punch, dann langsame Entspannung über die
+   Basis-Transition (~180 ms ease-out). Kombiniert Weight-Bump,
+   Letter-Spacing und Mikro-Scale, damit auch auf Touch (ohne :hover)
+   und Desktop (schon auf 700) eine spürbare Bewegung entsteht. */
+.menu__item--chime {
+  font-weight: 700;
+  font-variation-settings: 'wght' 700;
+  letter-spacing: 0.035em;
+  transform: scale(1.04);
+  transition-duration: 60ms;
+  transition-timing-function: ease-out;
+}
+
+/* Menü-Items: gestaffeltes Einblenden */
+.menu.is-open .menu__item {
+  animation: menu-fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.menu.is-open li:nth-child(1)  .menu__item { animation-delay: 0.06s; }
+.menu.is-open li:nth-child(2)  .menu__item { animation-delay: 0.09s; }
+.menu.is-open li:nth-child(3)  .menu__item { animation-delay: 0.12s; }
+.menu.is-open li:nth-child(4)  .menu__item { animation-delay: 0.15s; }
+.menu.is-open li:nth-child(5)  .menu__item { animation-delay: 0.18s; }
+.menu.is-open li:nth-child(6)  .menu__item { animation-delay: 0.21s; }
+.menu.is-open li:nth-child(7)  .menu__item { animation-delay: 0.24s; }
+.menu.is-open li:nth-child(8)  .menu__item { animation-delay: 0.27s; }
+.menu.is-open li:nth-child(9)  .menu__item { animation-delay: 0.30s; }
+.menu.is-open li:nth-child(10) .menu__item { animation-delay: 0.33s; }
+.menu.is-open li:nth-child(11) .menu__item { animation-delay: 0.36s; }
+.menu.is-open li:nth-child(12) .menu__item { animation-delay: 0.39s; }
+.menu.is-open li:nth-child(13) .menu__item { animation-delay: 0.42s; }
+.menu.is-open li:nth-child(14) .menu__item { animation-delay: 0.45s; }
+.menu.is-open li:nth-child(15) .menu__item { animation-delay: 0.48s; }
+.menu.is-open li:nth-child(16) .menu__item { animation-delay: 0.51s; }
+.menu.is-open li:nth-child(17) .menu__item { animation-delay: 0.54s; }
+
+@keyframes menu-fade-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Weißes Overlay — sitzt zwischen bg-canvas (fading) und fg-canvas (emerging).
+   Fading project whitens out under the overlay, emerging project punches through above.  */
+#white-overlay {
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+  will-change: opacity;
+}
+
+/* ── Player-Modal ────────────────────────────────
+   Clickable foreground video opens this card over the scroll scene.
+   Centered card on a dimmed, blurred backdrop. Smooth entrance.  */
+.player-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.player-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.player-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  /* Soft white wash with a heavier blur so the scroll scene is still
+     readable behind the modal — user keeps context of where they are
+     in the portfolio while engaging with the video. */
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(22px) saturate(1.1);
+  -webkit-backdrop-filter: blur(22px) saturate(1.1);
+  cursor: pointer;
+}
+
+/* ── Player modal (redesigned) ──
+   Video-first, cinematic dark theme. Single vertical flow:
+     [close]
+     ┌──────── video (hero) ────────┐
+     │                              │
+     └──────────────────────────────┘
+     TITLE (Rock 3D)
+     body tagline
+     credits row
+     description (dim, collapsible read)
+   On smaller screens the whole card scales down but the flow stays the
+   same — no sidebar competing for attention with the video.                */
+.player-modal__card {
+  position: relative;
+  width: min(92vw, 1080px);
+  max-height: 92vh;
+  margin: auto;
+  top: 50%;
+  transform: translateY(-50%) scale(0.96);
+  /* Clean white card, black text — sits as a quiet object on top of the
+     softly blurred scene. No drop shadow: the backdrop-blur already
+     creates enough separation without adding heavy visual noise. */
+  background: #ffffff;
+  color: #000;
+  border-radius: 14px;
+  overflow: hidden;
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.player-modal.is-open .player-modal__card {
+  transform: translateY(-50%) scale(1);
+  opacity: 1;
+}
+
+.player-modal__close {
+  position: absolute;
+  top: clamp(0.9rem, 1.4vw, 1.2rem);
+  right: clamp(0.9rem, 1.4vw, 1.2rem);
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 50%;
+  font-family: 'Martian Mono', monospace;
+  font-size: 1.3rem;
+  line-height: 1;
+  color: #000;
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.player-modal__close:hover {
+  background: #ffffff;
+  transform: scale(1.06);
+}
+
+.player-modal__stage {
+  position: relative;
+  flex: 0 0 auto;
+  width: 100%;
+  /* Light frame around the video — white like the card, no hard black
+     box. object-fit: contain on the <video> handles aspect ratio. */
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.player-modal__video {
+  display: block;
+  width: 100%;
+  max-height: 62vh;
+  object-fit: contain;
+  background: #ffffff;
+  transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.player-modal__video.is-swapping { opacity: 0; }
+
+/* Prev / next arrows for projects with multiple videos. Hidden by default
+   (the [hidden] attribute); unhidden from JS when a project ships a
+   videos[] array with more than one entry. Circular glass buttons that
+   sit just inside the stage edges — muted at rest, crisp on hover. */
+.player-modal__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(40px, 3.2vw, 52px);
+  height: clamp(40px, 3.2vw, 52px);
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.62;
+  z-index: 3;
+  transition:
+    opacity 0.28s cubic-bezier(0.23, 1, 0.32, 1),
+    transform 0.28s cubic-bezier(0.23, 1, 0.32, 1),
+    background 0.28s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.player-modal__nav svg {
+  width: 55%;
+  height: 55%;
+  display: block;
+}
+.player-modal__nav--prev { left: clamp(0.75rem, 1.4vw, 1.25rem); }
+.player-modal__nav--next { right: clamp(0.75rem, 1.4vw, 1.25rem); }
+.player-modal__nav:hover {
+  opacity: 1;
+  background: #ffffff;
+}
+.player-modal__nav--prev:hover { transform: translateY(-50%) translateX(-2px); }
+.player-modal__nav--next:hover { transform: translateY(-50%) translateX(2px); }
+.player-modal__nav:focus-visible {
+  opacity: 1;
+  outline: 1px solid rgba(0, 0, 0, 0.6);
+  outline-offset: 3px;
+}
+.player-modal__nav[hidden] { display: none; }
+
+/* Counter — mono, small, editorial. Anchors the carousel so the extra
+   content is legible at a glance without competing with the video. */
+.player-modal__counter {
+  position: absolute;
+  top: clamp(0.9rem, 1.4vw, 1.2rem);
+  left: clamp(0.9rem, 1.4vw, 1.2rem);
+  z-index: 3;
+  padding: 0.34rem 0.6rem;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 999px;
+  font-family: 'Martian Mono', monospace;
+  font-weight: 300;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  color: rgba(0, 0, 0, 0.72);
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  display: flex;
+  align-items: center;
+  gap: 0.28em;
+  pointer-events: none;
+}
+.player-modal__counter[hidden] { display: none; }
+.player-modal__counter-sep { opacity: 0.42; }
+.player-modal__stage-fallback {
+  padding: clamp(3rem, 8vw, 5rem) clamp(1.5rem, 3vw, 2.5rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  text-align: center;
+}
+.player-modal__stage-label {
+  font-family: 'Martian Mono', monospace;
+  font-weight: 300;
+  font-size: 0.78rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.42);
+}
+.player-modal__stage-title {
+  font-family: 'Rock 3D', sans-serif;
+  font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+  line-height: 1.05;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #000;
+}
+
+.player-modal__info {
+  padding: clamp(1.3rem, 2.4vw, 2rem) clamp(1.4rem, 2.6vw, 2.2rem) clamp(1.5rem, 2.6vw, 2.2rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  flex: 1 1 auto;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.22) transparent;
+}
+.player-modal__info::-webkit-scrollbar       { width: 5px; }
+.player-modal__info::-webkit-scrollbar-track { background: transparent; }
+.player-modal__info::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.22); border-radius: 3px; }
+.player-modal__info::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.38); }
+
+.player-modal__title {
+  font-family: 'Rock 3D', sans-serif;
+  font-size: clamp(1.3rem, 2.2vw, 1.85rem);
+  line-height: 1.1;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #000;
+  margin: 0;
+}
+.player-modal__body {
+  font-family: 'Martian Mono', monospace;
+  font-weight: 300;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: #222;
+  margin: 0;
+  white-space: pre-line;
+}
+.player-modal__credits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3em 1.8em;
+  margin: 0.2rem 0 0;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  font-family: 'Martian Mono', monospace;
+  font-weight: 300;
+  font-size: 0.7rem;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.player-modal__credits dt {
+  color: rgba(0, 0, 0, 0.45);
+  margin-right: 0.45em;
+}
+.player-modal__credits dd {
+  color: #000;
+  margin: 0 1.6em 0 0;
+}
+.player-modal__credits .player-modal__credit-pair {
+  display: inline-flex;
+  gap: 0.5em;
+  align-items: baseline;
+}
+.player-modal__description {
+  font-family: 'Martian Mono', monospace;
+  font-weight: 300;
+  font-size: 0.78rem;
+  line-height: 1.75;
+  color: #444;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  margin-top: 0.2rem;
+}
+.player-modal__description p {
+  margin: 0;
+}
+
+/* Scroll-Szene bleibt sichtbar im Hintergrund — der backdrop-filter des
+   Modals blurt sie, genau wie beim Menü. Logo versteckt, damit der Blick
+   auf der Karte bleibt. */
+body.is-player-open .logo-btn {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* ── Mobile / tablet adaptations ───────────────────────────
+   Below 820 px the scroll-scene text stops shrinking with the
+   canvas (JS skips the scale transform at this breakpoint) and
+   the player modal collapses to a single-column, taller card. */
+@media (max-width: 820px) {
+  /* Scale pivot moved up so the larger-scaled video on mobile doesn't
+     push the text off-screen. */
+  #fg-canvas, #bg-canvas {
+    transform-origin: center 40%;
+  }
+
+  /* Left-align the caption block on mobile — title + body flush to the
+     left with a consistent margin. */
+  .text-anchor {
+    align-items: flex-start;
+    padding-left: clamp(1.1rem, 5vw, 2rem);
+    padding-right: clamp(1.1rem, 5vw, 2rem);
+  }
+
+  .text-title {
+    font-size: clamp(1.6rem, 7.4vw, 2.4rem);
+    white-space: nowrap; /* JS shrinks font-size to fit one line */
+    text-align: center;
+    width: 100%;
+    padding: 0;
+    line-height: 1.05;
+  }
+
+  .text-body {
+    font-size: clamp(0.8rem, 3.3vw, 1rem);
+    width: 100%;
+    margin-top: clamp(0.9rem, 4.5vw, 1.8rem);
+    line-height: 1.55;
+    text-align: left;
+    /* Tighter on mobile — a tall text panel would otherwise push past the
+       bottom edge. Internal scroll still works, isolated from page scroll. */
+    max-height: 26vh;
+  }
+
+  .menu {
+    /* Mobile logo uses the same clamp() for its top/right — keep menu
+       edge spacing in lockstep. */
+    padding-left: clamp(1rem, 2.5vw, 2.5rem);
+    padding-right: clamp(1rem, 2.5vw, 2.5rem);
+    padding-bottom: clamp(1rem, 2.5vw, 2.5rem);
+  }
+
+  .menu__item {
+    font-size: clamp(1.05rem, 4.2vw, 1.5rem);
+    letter-spacing: -0.015em;
+  }
+
+  .menu__list {
+    gap: 0.55em;
+    padding-right: 1rem;
+  }
+  .menu__viewport {
+    /* Same expanding behavior on mobile; starting height is a touch
+       higher because the address bar eats some of the 25vh and touch
+       targets want a bit more breathing room. */
+    max-height: calc(28vh + 64vh * var(--menu-expand, 0));
+  }
+
+  .logo { width: clamp(44px, 11vw, 60px); }
+
+  .player-modal__card {
+    width: 94vw;
+    max-width: 560px;
+    max-height: 94vh;
+    border-radius: 12px;
+  }
+
+  .player-modal__video { max-height: 52vh; }
+
+  .player-modal__stage-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.24em;
+  }
+  .player-modal__stage-title {
+    font-size: clamp(1.4rem, 6vw, 2.1rem);
+  }
+
+  .player-modal__info {
+    padding: clamp(1.1rem, 4.8vw, 1.7rem);
+    gap: 0.8rem;
+  }
+
+  .player-modal__title {
+    font-size: clamp(1.1rem, 4.8vw, 1.5rem);
+  }
+
+  .player-modal__body {
+    font-size: 0.84rem;
+    line-height: 1.55;
+  }
+
+  .player-modal__credits {
+    font-size: 0.66rem;
+    gap: 0.2em 1.3em;
+    padding-top: 0.75rem;
+  }
+
+  .player-modal__description {
+    font-size: 0.74rem;
+    line-height: 1.65;
+  }
+
+  .player-modal__close {
+    top: 0.7rem;
+    right: 0.7rem;
+    width: 32px;
+    height: 32px;
+    font-size: 1.15rem;
+  }
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  #fg-canvas, #bg-canvas, .preloader { transition: none; }
+  .player-modal, .player-modal__card { transition: none; }
+}
