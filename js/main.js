@@ -782,17 +782,23 @@ function drawVignette(ctx, w, h) {
   }, 1200);
 
   // ── Bounce beim Hartstopp ──
-  function triggerBounce() { bounceOffset = 0.006; }
+  // Mobile touch input is coarser than a trackpad, so the hard stops
+  // need more "presence" there — bigger bounce scale kick and a deeper
+  // deadzone so users really feel the pause at each project.
+  const isMobileNow = () => window.innerWidth <= 820;
+  function triggerBounce() { bounceOffset = isMobileNow() ? 0.016 : 0.006; }
+  function deadzonePx() { return isMobileNow() ? 240 : CONFIG.DEADZONE_PX; }
 
   // ── Scroll-Delta ──
   function handleDelta(deltaPx) {
     if (inDeadzone) {
+      const dz = deadzonePx();
       deadzoneAccum += deltaPx;
-      if (deadzoneAccum > CONFIG.DEADZONE_PX) {
+      if (deadzoneAccum > dz) {
         inDeadzone = false;
         targetPos  = deadzoneAt + 0.002;
         deadzoneAccum = 0;
-      } else if (deadzoneAccum < -(CONFIG.DEADZONE_PX * 0.5)) {
+      } else if (deadzoneAccum < -(dz * 0.5)) {
         inDeadzone = false;
         targetPos  = deadzoneAt - 0.002;
         deadzoneAccum = 0;
@@ -1401,6 +1407,10 @@ function drawVignette(ctx, w, h) {
     if (!isMenuOpen()) return;
     e.preventDefault();
     e.stopPropagation();
+    // Mobile: menu is static — all 12 entries fit on screen. Swallow the
+    // wheel delta so nothing behind scrubs, but don't drive the menu
+    // scroll state.
+    if (isMobileNow()) return;
     let d = e.deltaY;
     if (e.deltaMode === 1) d *= 32;
     if (e.deltaMode === 2) d *= window.innerHeight;
@@ -1416,6 +1426,9 @@ function drawVignette(ctx, w, h) {
     if (!isMenuOpen() || menuTouchY === null) return;
     e.preventDefault();
     e.stopPropagation();
+    // Mobile: no menu-scroll — the list is static and entirely visible.
+    // Still preventDefault so the scene behind cannot scrub.
+    if (isMobileNow()) return;
     const y   = e.touches[0].clientY;
     const dy  = menuTouchY - y;
     menuTouchY = y;

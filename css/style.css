@@ -733,14 +733,22 @@ body.is-player-open .logo-btn {
   }
 
   .menu__list {
-    gap: 0.55em;
-    padding-right: 1rem;
+    /* Tight gap on mobile so all 12 entries fit in the viewport without
+       needing the scroll-expand phase. Transform is reset to identity
+       so the JS phase-2 translate that still runs in the background can
+       never push items off-screen. */
+    gap: 0.35em;
+    padding: 4px 1rem 14px 0.25rem;
+    transform: none !important;
   }
   .menu__viewport {
-    /* Same expanding behavior on mobile; starting height is a touch
-       higher because the address bar eats some of the 25vh and touch
-       targets want a bit more breathing room. */
-    max-height: calc(28vh + 64vh * var(--menu-expand, 0));
+    /* Mobile: no scroll expansion. Viewport fills the available space
+       above the bottom padding so every project is visible at rest and
+       the whole list behaves as a static column. No mask either — there
+       is nothing to fade out of view. */
+    max-height: calc(100svh - 12rem);
+    -webkit-mask-image: none;
+            mask-image: none;
   }
 
   .logo { width: clamp(44px, 11vw, 60px); }
