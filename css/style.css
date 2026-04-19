@@ -44,7 +44,7 @@ html, body {
 }
 
 .preloader__video {
-  width: clamp(160px, 22vw, 340px);
+  width: clamp(260px, 42vw, 560px);
   height: auto;
   display: block;
   /* Let every click bubble to .preloader — the <video> element

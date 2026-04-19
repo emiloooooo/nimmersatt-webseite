@@ -9,7 +9,7 @@ const PROJECTS = [
   {
     title: 'CHARLIEXCX - Moment (Premiere)',
     slug:  'brat',
-    body:  "Berlinale premiere, 24-hour turnaround. Cupra built in 3D, lighting matched to the room.",
+    body:  "Berlinale premiere night with a 24 hour turnaround. We caught the club at full energy and built Cupra in 3D, matching its lighting to the room so the brand felt native to the moment.",
     description:
       'During the Berlinale premiere of "Moment," I was commissioned by a PR agency to capture the event\'s energy. The project expanded to include brand integration for Cupra, requiring a luxury aesthetic within a club setting.\n\n' +
       'Communication was difficult due to the environment, requiring a highly adaptive filming style. Since the vehicles were not on-site, we utilized 3D models and matched the club\'s lighting to generate assets that felt organic to the edit.\n\n' +
@@ -24,7 +24,7 @@ const PROJECTS = [
   {
     title: 'Stylo - Alles Gut (Short Film)',
     slug:  'berlin-klohaus',
-    body:  "A couple's story woven through Berlin. Short drama built on invisible transitions.",
+    body:  "A couple's story threaded through Berlin's everyday life, told as a short drama built on invisible transitions where the quiet moments carry the narrative.",
     description: null,
     video: 'assets/Stylo - Alles Gut (Official Video).mp4',
     credits: [
@@ -37,13 +37,13 @@ const PROJECTS = [
     // Offsets apply in CANVAS space before the CSS scale transform —
     // at hard-stop scale 0.373 the visible shift is ~37 % of the value,
     // so we need a larger offset than the apparent miss to correct it.
-    frameOffsetX: -0.08,
+    frameOffsetX: -0.04,
     frameOffsetY:  0.03,
   },
   {
     title: '032c x CUPRA (Collaboration)',
     slug:  'paris',
-    body:  "Cupra meets Paris Fashion Week. The city as set — editorial and automotive in one frame.",
+    body:  "An urban fashion vibe meeting Cupra in the middle of Paris Fashion Week, where the city itself became the set and street tempo met sharper brand lines in one editorial frame.",
     description: null,
     video: null,
     credits: [
@@ -55,7 +55,7 @@ const PROJECTS = [
   {
     title: "Marc O'Polo (Documentary)",
     slug:  'vietnam',
-    body:  "Global transparency mapped across continents to Fair Wear Foundation standards.",
+    body:  "Global transparency mapped across continents. We documented authentic production conditions to Fair Wear Foundation standards, moving through industrial environments without breaking the flow of work.",
     description:
       'The objective was to provide visual evidence of Marc O\u2019Polo\u2019s supply chain transparency and their adherence to Fair Wear Foundation standards. The film aimed to document authentic production conditions for their sustainability report.\n\n' +
       'The production involved navigating large-scale industrial environments in a new global context. The challenge was documenting the facilities without disrupting their high-efficiency workflows, requiring a tactical and non-intrusive approach to cinematography.\n\n' +
@@ -70,7 +70,7 @@ const PROJECTS = [
   {
     title: 'miiraqt (Artist Identity)',
     slug:  'miira',
-    body:  "New-generation energy sampled from the past. Built for 3 Strikes on a 30-minute turnaround.",
+    body:  "New generation energy sampled from the past and built for 3 Strikes on a thirty minute feedback loop, the shoot kept the artist's fresh perspective intact all the way through to upload.",
     description:
       'The connection for "3 Strikes" developed through a professional network that recognized the value of my previous work in the genre. The visuals were designed to support a heavy sample while highlighting the artist\'s position in a new generation of talent.\n\n' +
       'The atmosphere on set was defined by the artist\'s youth and fresh perspective. The collaboration was efficient and focused, allowing for a streamlined workflow that capitalized on the direct energy of the shoot.\n\n' +
@@ -85,7 +85,7 @@ const PROJECTS = [
   {
     title: 'SS26 (Berlin Fashion Week)',
     slug:  'berlin',
-    body:  'Four brands, two days. Funkturmpalais, produced with Reference Studio.',
+    body:  'Four brands across two days at the legendary Funkturmpalais, produced with Reference Studio. We handled lighting, camera, crew and post so every brand arrived runway ready.',
     description: null,
     video: null,
     credits: [
@@ -97,7 +97,7 @@ const PROJECTS = [
   {
     title: 'FW26 (Berlin Fashion Week)',
     slug:  'garage',
-    body:  'Four brands, two days. Kant Garage, produced with Reference Studio.',
+    body:  'Four brands across two days at the legendary Kant Garage, produced with Reference Studio. We handled lighting, camera, crew and post so every brand arrived runway ready.',
     description: null,
     video: null,
     credits: [
@@ -109,7 +109,7 @@ const PROJECTS = [
   {
     title: 'Whispers - WINTERGARTEN (Short Film)',
     slug:  'hermannplatz',
-    body:  'Berlin youth culture — a story of abuse and trauma, told close to the people it portrays.',
+    body:  'Following Berlin youth culture through a story of abuse and trauma, a patient, unflinching short film told close to the people it portrays rather than over them.',
     description: null,
     video: 'assets/Whispers - WINTERGARTEN (prod. Flybea) - Official Short Music Film.mp4',
     credits: [
@@ -121,7 +121,7 @@ const PROJECTS = [
   {
     title: 'index® (Brand Identity)',
     slug:  'portugal',
-    body:  'Ten campaigns shipped in three months. One visual system across print, screen and space.',
+    body:  'Brand development, strategy and supervision across ten campaigns shipped in three months, grounded in one shared visual system that scaled across print, screen and space.',
     description: null,
     videos: [
       'assets/INDEX® - KLEIDER MACHEN LEUTE.mp4',
@@ -140,7 +140,7 @@ const PROJECTS = [
   {
     title: 'Soyhan (Artist Identity)',
     slug:  'wedding',
-    body:  'Six million streams. A 2D visualizer built from a thousand images and fifty typefaces.',
+    body:  'Over six million streams with a viral social rollout, three concerts and a merchandise line, anchored by a 2D visualizer built from a thousand images and fifty typefaces synced to the rhythm.',
     description:
       'Stevie B from Berlin Wedding Pankstra\u00dfe.\n\n' +
       'Initiated through Universal Music, this project was part of a larger visual rollout for the artist\'s debut. The track required a 2D visualizer that utilized a heavy-asset workflow, a new technical direction for the production team.\n\n' +
@@ -156,7 +156,7 @@ const PROJECTS = [
   {
     title: 'Kleinstadt Uniques (Artist Identity)',
     slug:  'wolfsburg',
-    body:  'Blue Ice automotive aesthetic on a studio music video — polished, never staged.',
+    body:  'A Blue Ice automotive aesthetic applied to a studio music video, keeping the look sharp and expensive while staying grounded in the raw energy of the track.',
     description:
       'This collaboration aimed to apply the "Blue Ice" aesthetic of high-end automotive commercials to a studio-based music video. The goal was a sharp, expensive look that remained grounded in the energy of the track.\n\n' +
       'My role involved bridging the gap between technical planning and the spontaneous creative energy of the artists. It required maintaining the production\'s direction while allowing room for the artists to operate within their own creative flow.\n\n' +
@@ -171,7 +171,7 @@ const PROJECTS = [
   {
     title: 'The Benchmark (Commercial)',
     slug:  'said',
-    body:  "A Berlin stone setter's workshop turned cinematic. Anchored the Benchalist stand at Inhorgenta Munich.",
+    body:  "A Berlin stone setter's workshop turned cinematic for the intimate process of gemstone setting, the film anchoring the Benchalist stand at Inhorgenta Munich.",
     description:
       'The project was initiated as a strategic exchange between a Berlin-based stone setter and Benchalist. The objective was to document the technical precision of their specialized workbench within a professional workshop environment, providing the brand with high-end visual assets in exchange for the workstation.\n\n' +
       'Executed as a collaborative passion project, the production focused on the intimate details of the gemstone setting process. We transformed the workshop into a cinematic space, utilizing specific lighting and cinematography to highlight the synergy between the artisan\'s craft and the technical design of the furniture.\n\n' +
@@ -214,7 +214,7 @@ const CONFIG = {
   SCALE_P0_END:    0.373,  // localPos 1 (hard stop)
   SCALE_P1_END:    1.1,    // localPos 2 (end of fade)
 
-  DEADZONE_PX:     160,
+  DEADZONE_PX:     110,
 
   // White fade: starts at WHITE_FADE_FROM, completes at CYCLE_LEN
   WHITE_FADE_FROM: 1.40,
@@ -223,8 +223,8 @@ const CONFIG = {
   VIGNETTE_SIDES:  0.14,
   VIGNETTE_TB:     0.08,
 
-  SENSITIVITY:     0.0012,
-  LERP_SPEED:      0.10,
+  SENSITIVITY:     0.0010,
+  LERP_SPEED:      0.075,
 };
 
 // Fully sequential projects — previous project must complete its entire
@@ -662,24 +662,41 @@ function drawVignette(ctx, w, h) {
   const preloadStart = Date.now();
   let preloaderDismissed       = false;
 
-  // Force-kick the loader video. Chrome/Safari normally autoplay a muted
-  // <video> without intervention, but cached-HTML reloads and some mobile
-  // configurations silently pause it on first paint — the user then sees
-  // a blank white preloader instead of the animation. Calling play()
-  // explicitly after load (and swallowing the promise) makes the kick
-  // resilient across every autoplay-policy variant we've seen.
+  // Force-kick the loader video. Chrome / Safari normally autoplay a
+  // muted <video> without intervention, but cached reloads, mobile power
+  // savers and some third-party extensions silently pause it on first
+  // paint — the user then sees a blank white preloader instead of the
+  // animation. The fix below runs play() on every meaningful lifecycle
+  // event AND on a brief poll for the first ~2.5 s, so even a browser
+  // that blocks the first call catches the next one. Every call
+  // swallows its rejected promise so autoplay-policy noise never
+  // surfaces.
   const preloaderVideo = preloader.querySelector('video');
   if (preloaderVideo) {
+    preloaderVideo.muted        = true;
+    preloaderVideo.defaultMuted = true;
+    preloaderVideo.playsInline  = true;
     const kickPlay = () => {
+      if (!preloaderVideo.paused) return;
       try {
         const p = preloaderVideo.play();
         if (p && typeof p.catch === 'function') p.catch(() => {});
       } catch (e) { /* ignore */ }
     };
-    if (preloaderVideo.readyState >= 2) kickPlay();
-    preloaderVideo.addEventListener('loadeddata',    kickPlay, { once: true });
-    preloaderVideo.addEventListener('canplay',       kickPlay, { once: true });
-    preloaderVideo.addEventListener('canplaythrough',kickPlay, { once: true });
+    kickPlay();
+    ['loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough', 'suspend']
+      .forEach((evt) => preloaderVideo.addEventListener(evt, kickPlay));
+    // Safety net — retry every 120 ms for the first 2.5 s. Cheap, and
+    // cleans itself up when the preloader is dismissed or playback is
+    // underway.
+    const kickTimer = setInterval(() => {
+      if (preloaderDismissed || !preloaderVideo.paused) {
+        clearInterval(kickTimer);
+        return;
+      }
+      kickPlay();
+    }, 120);
+    setTimeout(() => clearInterval(kickTimer), 2600);
   }
   // Separate flag from isReady: the scene must also be VISUALLY emerged
   // before we allow the click-to-open-player gesture. Otherwise users
@@ -765,7 +782,7 @@ function drawVignette(ctx, w, h) {
   }, 1200);
 
   // ── Bounce beim Hartstopp ──
-  function triggerBounce() { bounceOffset = 0.018; }
+  function triggerBounce() { bounceOffset = 0.006; }
 
   // ── Scroll-Delta ──
   function handleDelta(deltaPx) {
@@ -1026,7 +1043,7 @@ function drawVignette(ctx, w, h) {
     if (isReady) {
       // Lerp toward target, but cap per-frame velocity so fast scrolls can't
       // skip the fade zone in 2–3 frames.
-      const MAX_STEP = window.innerWidth <= 820 ? 0.08 : 0.035;
+      const MAX_STEP = window.innerWidth <= 820 ? 0.06 : 0.024;
       const diff = targetPos - currentPos;
       let step = diff * CONFIG.LERP_SPEED;
       if (step >  MAX_STEP) step =  MAX_STEP;
@@ -1035,8 +1052,8 @@ function drawVignette(ctx, w, h) {
 
       if (currentPos >= CYCLE_STEP) hasAdvanced = true;
 
-      bounceOffset *= 0.82;
-      if (bounceOffset < 0.0001) bounceOffset = 0;
+      bounceOffset *= 0.88;
+      if (bounceOffset < 0.00005) bounceOffset = 0;
 
       const allowStartFade = hasAdvanced || currentPos < 0;
       const state          = getRenderState(currentPos, allowStartFade);
@@ -1108,7 +1125,6 @@ function drawVignette(ctx, w, h) {
 
   // ── Player-Modal ──────────────────────────────────────────────
   const playerTitle   = playerModal.querySelector('.player-modal__title');
-  const playerBody    = playerModal.querySelector('.player-modal__body');
   const playerDesc    = playerModal.querySelector('.player-modal__description');
   const playerStageT  = playerModal.querySelector('.player-modal__stage-title');
   const playerCredit  = playerModal.querySelector('.player-modal__credits');
@@ -1200,7 +1216,6 @@ function drawVignette(ctx, w, h) {
 
   function populatePlayer(project) {
     playerTitle.textContent  = project.title;
-    playerBody.textContent   = project.body;
     playerStageT.textContent = project.title;
 
     // Multi-paragraph description — split on double newlines so the

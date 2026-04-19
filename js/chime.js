@@ -21,9 +21,11 @@
   // Pentatonische Skala (Halbtöne relativ zum Original-Ton).
   // Jeder Trigger wählt seine Stufe zufällig aus dieser Skala — wie ein
   // echtes Windspiel klingt derselbe Eintrag nie zweimal gleich.
-  // Grundpitch um 12 Halbtöne (= 6 Ganztöne, also eine ganze Oktave)
-  // nach unten verschoben.
-  const PITCH_SHIFT_SEMITONES = -12;
+  // Grundpitch um 14 Halbtöne (eine ganze Oktave plus ein Ganzton)
+  // nach unten verschoben — der letzte Ganzton bringt das Windspiel
+  // deutlich tiefer, ohne dass die pentatonischen Stufen ihre Balance
+  // verlieren.
+  const PITCH_SHIFT_SEMITONES = -14;
   const PENTATONIC = [0, 2, 4, 7, 9, 12].map((n) => n + PITCH_SHIFT_SEMITONES);
 
   // Mikro-Detune-Spanne in Cents (±), damit Wiederholungen nicht 1:1 klingen.
