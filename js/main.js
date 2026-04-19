@@ -1202,11 +1202,23 @@ function drawVignette(ctx, w, h) {
     if (!playerVideo) return;
     const apply = () => {
       playerVideo.src   = encodeSrc(src);
-      playerVideo.muted = true;
+      // Start unmuted — the player is always opened through a user
+      // gesture (menu click, scene tap, carousel arrow), which satisfies
+      // every current browser's autoplay-with-sound policy. If that
+      // promise still rejects (stricter configs, Safari reader modes,
+      // etc.), fall back to muted so the clip at least starts and the
+      // user can unmute manually via the native controls.
+      playerVideo.muted = false;
       try { playerVideo.load(); } catch (e) { /* ignore */ }
       const tryPlay = () => {
         const p = playerVideo.play();
-        if (p && typeof p.catch === 'function') p.catch(() => {});
+        if (p && typeof p.catch === 'function') {
+          p.catch(() => {
+            playerVideo.muted = true;
+            const p2 = playerVideo.play();
+            if (p2 && typeof p2.catch === 'function') p2.catch(() => {});
+          });
+        }
       };
       const onReady = () => {
         playerVideo.classList.remove('is-swapping');
