@@ -597,13 +597,15 @@ function drawVignette(ctx, w, h) {
   // transform on a non-scrollable list, which is deterministic on iOS.
   let menuScrollCurrent = 0;
   let menuScrollTarget  = 0;
-  // Lower LERP = more glide. 0.18 reaches target in ~22 frames (~370 ms)
-  // — smooth without feeling laggy on input.
-  const MENU_LERP       = 0.18;
-  // Pixels of scroll input that map to the full 25vh → 92vh viewport
-  // expansion (phase 1). Smaller values = faster expand; larger = more
-  // deliberate. Tuned so two to three trackpad ticks reach full expand.
-  const MENU_EXPAND_DISTANCE = 420;
+  // Low LERP = long glide. 0.095 reaches target in ~40 frames (~670 ms),
+  // giving the list that silky, weighted "falling into place" feel
+  // instead of a snappy 0.18-LERP chase.
+  const MENU_LERP       = 0.095;
+  // Pixels of scroll input that map to the full 25vh → 85vh viewport
+  // expansion (phase 1). Bumped from 420 to 560 so the expansion takes
+  // a few more deliberate wheel ticks — feels less "pop-open", more
+  // "unfold".
+  const MENU_EXPAND_DISTANCE = 560;
 
   // Rubber-band overscroll — a quiet edge hint, nothing more. Pulling
   // past either edge pushes the list a few px in the direction of the
@@ -667,7 +669,14 @@ function drawVignette(ctx, w, h) {
   //   click/tap bypasses that minimum immediately. ──
   const LOADER_DURATION = 2800;
   const preloadStart = Date.now();
-  let preloaderDismissed       = false;
+  // Split the dismiss flag so the auto-dismiss timer doesn't swallow a
+  // user tap. dismissScheduled = dismiss() has armed the fade. skipFired
+  // = user already skipped (short-circuits the timer). Previously a
+  // single flag meant: once auto-dismiss ran, tapping was a no-op until
+  // the 3.2 s timer fired — on mobile that looked exactly like "skip
+  // doesn't work".
+  let dismissScheduled = false;
+  let skipFired        = false;
 
   // Loader is now a GIF — browsers auto-animate images without
   // autoplay-policy gymnastics, so no play()/kick logic is needed.
@@ -686,11 +695,11 @@ function drawVignette(ctx, w, h) {
   }
 
   function dismiss() {
-    if (preloaderDismissed) return;
+    if (dismissScheduled || skipFired) return;
     const elapsed   = Date.now() - preloadStart;
     const remaining = Math.max(0, LOADER_DURATION - elapsed);
-    preloaderDismissed = true;
-    setTimeout(() => preloader.classList.add('is-done'), remaining + 400);
+    dismissScheduled = true;
+    setTimeout(() => { if (!skipFired) preloader.classList.add('is-done'); }, remaining + 400);
     // Arm interaction after the preloader has fully faded
     // (0.8 s CSS transition) — prevents the click-that-skips from also
     // opening the player the same frame.
@@ -708,10 +717,12 @@ function drawVignette(ctx, w, h) {
   // whatever is ready, which is far better than being held hostage by
   // the loader). Attached via pointerdown (fires earlier than click,
   // most reliable across devices), with touchend + click fallbacks so
-  // every input path works. De-duplicated via preloaderDismissed.
+  // every input path works. De-duplicated via skipFired — intentionally
+  // NOT gated on dismissScheduled so taps still work after the auto
+  // dismiss timer has armed.
   function skipPreloader(e) {
-    if (preloaderDismissed) return;
-    preloaderDismissed = true;
+    if (skipFired) return;
+    skipFired = true;
     if (!isReady) {
       isReady = true;
       fgCanvas.classList.add('is-loaded');
@@ -1115,7 +1126,10 @@ function drawVignette(ctx, w, h) {
       if (menuScrollTarget < 0)         menuScrollTarget = 0;
 
       menuScrollCurrent += (menuScrollTarget - menuScrollCurrent) * MENU_LERP;
-      if (Math.abs(menuScrollTarget - menuScrollCurrent) < 0.3) {
+      // Tighter snap threshold (0.08 px) — with the slower LERP the tail
+      // of the glide matters more, so don't hard-snap while there's
+      // still visible motion left.
+      if (Math.abs(menuScrollTarget - menuScrollCurrent) < 0.08) {
         menuScrollCurrent = menuScrollTarget;
       }
 
@@ -1680,9 +1694,11 @@ function drawVignette(ctx, w, h) {
     const y   = e.touches[0].clientY;
     const dy  = menuTouchY - y;
     menuTouchY = y;
-    // 1.6× amplification on touch — finger-pixel distance is short, a
-    // single downward drag should reveal a meaningful chunk of the list.
-    pushMenuScroll(dy * 1.6);
+    // 1.1× amplification — dialled back from 1.6× so each finger frame
+    // nudges the target a little less. Combined with the slower LERP
+    // this trades "snappy & a bit jumpy" for "weighty & butter smooth";
+    // still responsive, no longer twitchy.
+    pushMenuScroll(dy * 1.1);
   }, { passive: false, capture: true });
   window.addEventListener('touchend',    () => { menuTouchY = null; }, { capture: true });
   window.addEventListener('touchcancel', () => { menuTouchY = null; }, { capture: true });
@@ -1690,8 +1706,12 @@ function drawVignette(ctx, w, h) {
   menu.addEventListener('click', (e) => {
     const item = e.target.closest('.menu__item');
     if (item) {
-      e.preventDefault();
       const kind = item.dataset.kind || 'project';
+      // Legal link: let the browser navigate. No preventDefault.
+      if (kind === 'link') {
+        return;
+      }
+      e.preventDefault();
       const idx  = parseInt(item.dataset.idx ?? item.dataset.projectIdx, 10);
       setMenu(false);
       if (Number.isNaN(idx)) return;

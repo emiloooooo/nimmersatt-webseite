@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rock+3D&family=Martian+Mono:wght@300;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=41">
+  <link rel="stylesheet" href="css/style.css?v=43">
   <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -24,20 +24,12 @@
        a LOADER_DURATION minimum. -->
   <div class="preloader" id="preloader">
     <img class="preloader__media" src="assets/loader.gif?v=4" alt="Nimmersatt">
-    <span class="preloader__hint">Tippen zum Überspringen</span>
   </div>
 
   <!-- Logo: oben rechts (toggle Menu) -->
   <button class="logo-btn" id="logo-btn" aria-label="Menü öffnen" aria-expanded="false">
     <img class="logo" src="assets/logo.svg" alt="Nimmersatt">
   </button>
-
-  <!-- Rechtliche Hinweise: oben links, spiegelt das Logo rechts.
-       Gleicher Abstand zum Bildschirmrand wie die Logo-Kachel. -->
-  <nav class="site-links" aria-label="Rechtliche Hinweise">
-    <a href="impressum.html" class="site-links__link">Impressum</a>
-    <a href="datenschutz.html" class="site-links__link">Datenschutz</a>
-  </nav>
 
   <!-- Dropdown Menu: populated dynamically from PROJECTS in js/main.js.
        The viewport wrapper is the fixed-height window that clips the list.
@@ -46,6 +38,13 @@
   <nav class="menu" id="menu" aria-hidden="true">
     <div class="menu__viewport" id="menu-viewport">
       <ul class="menu__list" id="menu-list"></ul>
+    </div>
+    <!-- Legal row: sits below the project list, centered, smaller than
+         the main entries. These are plain anchors (not .menu__item) so
+         they don't participate in the chime pulse or open the player. -->
+    <div class="menu__legal" aria-label="Legal">
+      <a class="menu__legal-link" href="impressum.html">Imprint</a>
+      <a class="menu__legal-link" href="datenschutz.html">Privacy</a>
     </div>
   </nav>
 
@@ -157,7 +156,7 @@
     </article>
   </div>
 
-  <script src="js/main.js?v=63"></script>
+  <script src="js/main.js?v=67"></script>
   <script src="js/chime.js?v=10"></script>
 </body>
 </html>

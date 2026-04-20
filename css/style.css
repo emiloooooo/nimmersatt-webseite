@@ -53,27 +53,6 @@ html, body {
   user-select: none;
   -webkit-user-drag: none;
 }
-.preloader__hint {
-  position: absolute;
-  bottom: clamp(1.25rem, 4vw, 2.25rem);
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: 'Martian Mono', monospace;
-  font-weight: 300;
-  font-size: 0.68rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(0, 0, 0, 0.45);
-  pointer-events: none;
-  /* Fade in after a beat so it doesn't fight the GIF's own entrance. */
-  opacity: 0;
-  animation: preloaderHintIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
-}
-@keyframes preloaderHintIn {
-  from { opacity: 0; transform: translate(-50%, 6px); }
-  to   { opacity: 1; transform: translate(-50%, 0); }
-}
-
 /* ── Canvases ──
    bg-canvas = fading (secondary) project, below white overlay.
    fg-canvas = emerging/current (primary) project, above white overlay.
@@ -240,36 +219,6 @@ html, body {
    wie die Logo-Kachel. Mono-Kleinbuchstaben, leise auf dem
    Scroll-Hintergrund, wird beim Menü- oder Player-Open ausgeblendet
    damit die Karte nicht durch Fußnoten gestört wird. */
-.site-links {
-  position: fixed;
-  top: clamp(1rem, 2.5vw, 2.5rem);
-  left: clamp(1rem, 2.5vw, 2.5rem);
-  display: flex;
-  gap: 0.9rem;
-  z-index: 1001;
-  font-family: 'Martian Mono', monospace;
-  font-weight: 300;
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  line-height: 1;
-  transition: opacity 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-}
-.site-links__link {
-  color: rgba(0, 0, 0, 0.55);
-  text-decoration: none;
-  transition: color 0.24s cubic-bezier(0.23, 1, 0.32, 1);
-}
-.site-links__link:hover {
-  color: #000;
-}
-body.is-player-open .site-links,
-body.is-menu-open .site-links,
-body:has(.menu.is-open) .site-links {
-  opacity: 0;
-  pointer-events: none;
-}
-
 /* ── Logo-Button oben rechts ── */
 .logo-btn {
   position: fixed;
@@ -302,7 +251,11 @@ body:has(.menu.is-open) .site-links {
   inset: 0;
   z-index: 1000;
   display: flex;
-  align-items: flex-end;
+  /* Column flow so the project list sits at the bottom and the legal
+     row lives below it as its own centered band. */
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: stretch;
   /* Edge spacing mirrors the logo's top/right corner offset so the text
      block and the logo read as parts of the same grid. */
   padding-left: clamp(1rem, 2.5vw, 2.5rem);
@@ -339,10 +292,11 @@ body:has(.menu.is-open) .site-links {
      down pushes texts up; scrolling back up returns them to rest. */
 .menu__viewport {
   position: relative;
-  /* 25vh collapsed → 92vh fully expanded (nearly full screen, leaving
-     only the logo corner). 14 items comfortably fit at this size so the
-     first item never gets clipped at the top edge. */
-  max-height: calc(25vh + 67vh * var(--menu-expand, 0));
+  /* 25vh collapsed → 85vh fully expanded. Upper cap trimmed from 92vh
+     so the legal row that now sits below the viewport always has room
+     at the bottom without being pushed off-screen. 12 project items
+     still fit comfortably. */
+  max-height: calc(25vh + 60vh * var(--menu-expand, 0));
   overflow: hidden;
   /* Soft bottom fade so newly-revealed items emerge without a hard edge.
      No top fade — top items are stable and deserve full presence.  */
@@ -381,6 +335,36 @@ body:has(.menu.is-open) .site-links {
 /* Legacy entries share all menu-item styling — no visual differentiation
    by default. Hook kept in case we want to treat them differently later. */
 .menu__item--legacy { }
+
+/* Legal row — Imprint + Privacy sit below the project list, centered
+   and noticeably smaller than the menu items so they read as secondary.
+   Wide gap between them plus a small top margin separates the block from
+   the list above without needing a visible divider. */
+.menu__legal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(1.75rem, 4vw, 3rem);
+  margin-top: clamp(0.75rem, 1.6vw, 1.25rem);
+  padding-top: clamp(0.5rem, 1vw, 0.75rem);
+  font-family: 'Martian Mono', monospace;
+  font-weight: 300;
+  font-size: clamp(0.66rem, 0.82vw, 0.78rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.menu__legal-link {
+  color: rgba(0, 0, 0, 0.55);
+  text-decoration: none;
+  transition: color 0.24s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.menu__legal-link:hover,
+.menu__legal-link:focus-visible { color: #000; outline: none; }
+
+/* Fade the legal row in with the menu, after the project list has
+   staggered in, so it feels like a considered footnote. */
+.menu .menu__legal { opacity: 0; transform: translateY(8px); transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); transition-delay: 0.35s; }
+.menu.is-open .menu__legal { opacity: 1; transform: translateY(0); }
 
 .menu__item {
   font-family: 'Martian Mono', monospace;
@@ -1051,12 +1035,21 @@ body.is-player-open .logo-btn {
   }
   .menu__viewport {
     /* Mobile: no scroll expansion. Viewport fills the available space
-       above the bottom padding so every project is visible at rest and
-       the whole list behaves as a static column. No mask either — there
-       is nothing to fade out of view. */
-    max-height: calc(100svh - 12rem);
+       above the bottom padding + legal row so every project is visible
+       at rest and the whole list behaves as a static column. Subtracted
+       an extra 1.5rem from the desktop budget to make room for the
+       centered Imprint / Privacy line. */
+    max-height: calc(100svh - 13.5rem);
     -webkit-mask-image: none;
             mask-image: none;
+  }
+
+  /* Mobile legal row: a touch larger than the hairline desktop size so
+     tap targets are comfortable, still clearly smaller than menu items. */
+  .menu__legal {
+    gap: clamp(1.25rem, 6vw, 2.25rem);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
   }
 
   .logo { width: clamp(44px, 11vw, 60px); }
