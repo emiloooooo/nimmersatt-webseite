@@ -215,6 +215,40 @@ html, body {
   outline-offset: 3px;
 }
 
+/* ── Impressum / Datenschutz oben links ──
+   Spiegelt das Logo rechts — gleicher clamp-Abstand zum Bildschirmrand
+   wie die Logo-Kachel. Mono-Kleinbuchstaben, leise auf dem
+   Scroll-Hintergrund, wird beim Menü- oder Player-Open ausgeblendet
+   damit die Karte nicht durch Fußnoten gestört wird. */
+.site-links {
+  position: fixed;
+  top: clamp(1rem, 2.5vw, 2.5rem);
+  left: clamp(1rem, 2.5vw, 2.5rem);
+  display: flex;
+  gap: 0.9rem;
+  z-index: 1001;
+  font-family: 'Martian Mono', monospace;
+  font-weight: 300;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1;
+  transition: opacity 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.site-links__link {
+  color: rgba(0, 0, 0, 0.55);
+  text-decoration: none;
+  transition: color 0.24s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.site-links__link:hover {
+  color: #000;
+}
+body.is-player-open .site-links,
+body:has(.menu.is-open) .site-links {
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* ── Logo-Button oben rechts ── */
 .logo-btn {
   position: fixed;

@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rock+3D&family=Martian+Mono:wght@300;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=37">
+  <link rel="stylesheet" href="css/style.css?v=38">
   <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -23,13 +23,20 @@
        skipPreloader()), and auto-dismisses once frames are ready plus
        a LOADER_DURATION minimum. -->
   <div class="preloader" id="preloader">
-    <img class="preloader__media" src="assets/loader.gif?v=2" alt="Nimmersatt">
+    <img class="preloader__media" src="assets/loader.gif?v=3" alt="Nimmersatt">
   </div>
 
   <!-- Logo: oben rechts (toggle Menu) -->
   <button class="logo-btn" id="logo-btn" aria-label="Menü öffnen" aria-expanded="false">
     <img class="logo" src="assets/logo.svg" alt="Nimmersatt">
   </button>
+
+  <!-- Rechtliche Hinweise: oben links, spiegelt das Logo rechts.
+       Gleicher Abstand zum Bildschirmrand wie die Logo-Kachel. -->
+  <nav class="site-links" aria-label="Rechtliche Hinweise">
+    <a href="impressum.html" class="site-links__link">Impressum</a>
+    <a href="datenschutz.html" class="site-links__link">Datenschutz</a>
+  </nav>
 
   <!-- Dropdown Menu: populated dynamically from PROJECTS in js/main.js.
        The viewport wrapper is the fixed-height window that clips the list.
@@ -88,7 +95,7 @@
              fetching, so switching between INDEX carousel videos
              doesn't leave a dark rectangle. Toggled via .is-active. -->
         <div class="player-modal__loading" aria-hidden="true">
-          <img src="assets/loader.gif?v=2" alt="">
+          <img src="assets/loader.gif?v=3" alt="">
         </div>
         <!-- Custom fullscreen toggle. Native video controls also offer
              one, but iOS Safari routes fullscreen through a separate
@@ -127,7 +134,7 @@
     </article>
   </div>
 
-  <script src="js/main.js?v=59"></script>
+  <script src="js/main.js?v=60"></script>
   <script src="js/chime.js?v=10"></script>
 </body>
 </html>

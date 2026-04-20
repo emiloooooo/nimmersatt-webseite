@@ -1,2 +1,9 @@
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 *.webm filter=lfs diff=lfs merge=lfs -text
+
+# web-assets/ is served directly from GitHub Pages so the player can stream
+# videos with a proper video/mp4 Content-Type and no attachment
+# disposition (which iOS Safari refuses to inline-play). These files stay
+# as regular git objects, not LFS, so Pages can serve them.
+web-assets/**.mp4 !filter !diff !merge -text
+web-assets/**.webm !filter !diff !merge -text
