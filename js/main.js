@@ -597,28 +597,36 @@ function drawVignette(ctx, w, h) {
   // transform on a non-scrollable list, which is deterministic on iOS.
   let menuScrollCurrent = 0;
   let menuScrollTarget  = 0;
-  // Low LERP = long glide. 0.095 reaches target in ~40 frames (~670 ms),
-  // giving the list that silky, weighted "falling into place" feel
-  // instead of a snappy 0.18-LERP chase.
-  const MENU_LERP       = 0.095;
+  // Input velocity layer — added on top of the LERP chase so quick
+  // flicks continue gliding after the finger lifts. Each frame we add
+  // velocity to the target and decay it by FRICTION. This is what
+  // native iOS momentum feels like; the previous "target jumps per
+  // touchmove" path was the source of the hakrig jitter.
+  let menuScrollVel     = 0;
+  // Very low LERP = long, melted glide. 0.06 reaches target in ~65
+  // frames (~1.1 s of easing tail). Combined with the velocity layer
+  // the overall motion reads as weighted and inertial rather than
+  // target-chasing.
+  const MENU_LERP       = 0.06;
+  const MENU_VEL_FRICTION = 0.93;   // per-frame velocity decay — soft, long tail
+  const MENU_VEL_MIN      = 0.12;   // below this, clamp to 0 to stop drift
   // Pixels of scroll input that map to the full 25vh → 85vh viewport
-  // expansion (phase 1). Bumped from 420 to 560 so the expansion takes
-  // a few more deliberate wheel ticks — feels less "pop-open", more
-  // "unfold".
-  const MENU_EXPAND_DISTANCE = 560;
+  // expansion (phase 1). Bumped again to 640 so the unfold breathes —
+  // with the slower LERP, a shorter expand distance was making the
+  // viewport snap open before the list could glide.
+  const MENU_EXPAND_DISTANCE = 640;
 
-  // Rubber-band overscroll — a quiet edge hint, nothing more. Pulling
-  // past either edge pushes the list a few px in the direction of the
-  // gesture, with a tapered resistance so further pulls have less
-  // effect as we approach MAX. Release is a straight exponential ease
-  // back to 0 — no spring, no velocity, no bounce. That was the
-  // "hoch und runter bouncen" the user called out: the earlier
-  // underdamped spring oscillated noticeably when released after a
-  // long scroll. The decay here goes one way, once.
+  // Rubber-band overscroll — quiet edge feedback. Pulling past either
+  // edge pushes the list a few px in the direction of the gesture,
+  // with asymptotic resistance. Release is an exponential ease back
+  // to 0. Softer values than the earlier pass: resistance 0.055 makes
+  // the pull feel more like stretching fabric than pushing a spring,
+  // and decay 0.93 returns over ~30 frames (~500 ms) instead of
+  // snapping back in 10.
   let menuOverscroll = 0;  // current pixel offset past the edge
-  const MENU_OVERSCROLL_RESISTANCE = 0.09;  // % of past-edge input accepted (tapered below)
-  const MENU_OVERSCROLL_DECAY      = 0.86;  // per-frame ease back to 0
-  const MENU_OVERSCROLL_MAX        = 40;    // tight clamp; edge hint only
+  const MENU_OVERSCROLL_RESISTANCE = 0.055; // % of past-edge input accepted (tapered below)
+  const MENU_OVERSCROLL_DECAY      = 0.93;  // per-frame ease back to 0 — softer, longer
+  const MENU_OVERSCROLL_MAX        = 48;    // slightly deeper than before for a softer feel
 
   // Route all scroll input through this so overscroll kicks in
   // automatically at either edge instead of a hard clamp. Resistance is
@@ -1136,17 +1144,46 @@ function drawVignette(ctx, w, h) {
       const expandedMaxPx = window.innerHeight * 0.92;
       const overflowPx    = Math.max(0, menuList.scrollHeight - expandedMaxPx);
       const maxScroll     = MENU_EXPAND_DISTANCE + overflowPx;
+
+      // Velocity layer — applied each frame before the LERP chase. When
+      // the user flicks and lifts, menuScrollVel carries the motion
+      // forward with friction decay. When they drag and hold, velocity
+      // stays near zero and the LERP chase dominates. This combined
+      // model is the iOS-native feel: impulse + momentum + easing tail.
+      if (Math.abs(menuScrollVel) > 0) {
+        menuScrollTarget += menuScrollVel;
+        menuScrollVel *= MENU_VEL_FRICTION;
+        if (Math.abs(menuScrollVel) < MENU_VEL_MIN) menuScrollVel = 0;
+      }
+
       // Targets entering out-of-range now go into overscroll instead of
       // being silently clamped — but we still clamp defensively here in
       // case they ever bypass pushMenuScroll().
-      if (menuScrollTarget > maxScroll) menuScrollTarget = maxScroll;
-      if (menuScrollTarget < 0)         menuScrollTarget = 0;
+      if (menuScrollTarget > maxScroll) {
+        // If velocity carried us past the edge, bleed the remaining
+        // velocity into overscroll so the rubber-band lift feels like
+        // the motion continuing, not a hard wall.
+        if (menuScrollVel > 0) {
+          menuOverscroll += menuScrollVel * 0.6;
+          if (menuOverscroll > MENU_OVERSCROLL_MAX) menuOverscroll = MENU_OVERSCROLL_MAX;
+          menuScrollVel = 0;
+        }
+        menuScrollTarget = maxScroll;
+      }
+      if (menuScrollTarget < 0) {
+        if (menuScrollVel < 0) {
+          menuOverscroll += menuScrollVel * 0.6;
+          if (menuOverscroll < -MENU_OVERSCROLL_MAX) menuOverscroll = -MENU_OVERSCROLL_MAX;
+          menuScrollVel = 0;
+        }
+        menuScrollTarget = 0;
+      }
 
       menuScrollCurrent += (menuScrollTarget - menuScrollCurrent) * MENU_LERP;
-      // Tighter snap threshold (0.08 px) — with the slower LERP the tail
-      // of the glide matters more, so don't hard-snap while there's
-      // still visible motion left.
-      if (Math.abs(menuScrollTarget - menuScrollCurrent) < 0.08) {
+      // Tighter snap threshold (0.06 px) — with the slower LERP and the
+      // velocity tail, the glide should fade out imperceptibly rather
+      // than snap on the last pixel.
+      if (Math.abs(menuScrollTarget - menuScrollCurrent) < 0.06 && menuScrollVel === 0) {
         menuScrollCurrent = menuScrollTarget;
       }
 
@@ -1689,10 +1726,19 @@ function drawVignette(ctx, w, h) {
     pushMenuScroll(d);
   }, { passive: false, capture: true });
 
+  // Touch tracking: last Y + a short rolling log of recent delta / dt
+  // samples. On touchend we average the last ~80 ms of motion to
+  // compute a release velocity — a proper flick carries the list with
+  // momentum the way iOS scrolling does.
   let menuTouchY = null;
+  let menuTouchSamples = [];  // [{ t, dy }]
   window.addEventListener('touchstart', (e) => {
     if (!isMenuOpen()) return;
     menuTouchY = e.touches[0].clientY;
+    menuTouchSamples = [];
+    // Interrupt any existing momentum — the finger is on the glass, the
+    // list should stop immediately and follow, not fight the gesture.
+    menuScrollVel = 0;
   }, { passive: false, capture: true });
   window.addEventListener('touchmove', (e) => {
     if (!isMenuOpen() || menuTouchY === null) return;
@@ -1711,14 +1757,41 @@ function drawVignette(ctx, w, h) {
     const y   = e.touches[0].clientY;
     const dy  = menuTouchY - y;
     menuTouchY = y;
-    // 1.1× amplification — dialled back from 1.6× so each finger frame
-    // nudges the target a little less. Combined with the slower LERP
-    // this trades "snappy & a bit jumpy" for "weighty & butter smooth";
-    // still responsive, no longer twitchy.
-    pushMenuScroll(dy * 1.1);
+    // 1.05× amplification — direct drag is almost 1:1 with finger
+    // motion now. The momentum layer takes over on release, so we no
+    // longer need to inflate the drag itself to make the list travel.
+    pushMenuScroll(dy * 1.05);
+    // Record this frame for velocity calc at release.
+    const now = performance.now();
+    menuTouchSamples.push({ t: now, dy });
+    // Keep only the last ~80 ms — older frames are irrelevant to the
+    // flick's current direction and would drag the average down.
+    while (menuTouchSamples.length && now - menuTouchSamples[0].t > 80) {
+      menuTouchSamples.shift();
+    }
   }, { passive: false, capture: true });
-  window.addEventListener('touchend',    () => { menuTouchY = null; }, { capture: true });
-  window.addEventListener('touchcancel', () => { menuTouchY = null; }, { capture: true });
+  function releaseMenuTouch() {
+    menuTouchY = null;
+    if (!menuTouchSamples.length) { menuTouchSamples = []; return; }
+    // Sum the recent dy samples over their time window → px/ms,
+    // convert to px/frame (assuming ~16.67 ms per frame).
+    const first = menuTouchSamples[0];
+    const last  = menuTouchSamples[menuTouchSamples.length - 1];
+    const window_ms = Math.max(1, last.t - first.t);
+    const totalDy = menuTouchSamples.reduce((s, x) => s + x.dy, 0);
+    const pxPerMs = totalDy / window_ms;
+    // Skip tiny residuals — if the user stopped before release, no
+    // fling should happen.
+    if (Math.abs(pxPerMs) > 0.08) {
+      // Multiplier controls fling reach; 18 gives a satisfying coast
+      // of ~30–40 frames on an average swipe without over-shooting the
+      // whole list. Also apply the same 1.05× amp as the drag.
+      menuScrollVel = pxPerMs * 18 * 1.05;
+    }
+    menuTouchSamples = [];
+  }
+  window.addEventListener('touchend',    releaseMenuTouch, { capture: true });
+  window.addEventListener('touchcancel', releaseMenuTouch, { capture: true });
 
   menu.addEventListener('click', (e) => {
     const item = e.target.closest('.menu__item');
