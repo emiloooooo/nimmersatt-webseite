@@ -616,34 +616,6 @@ body:has(.menu.is-open) .site-links {
   -webkit-user-drag: none;
 }
 
-/* Custom fullscreen toggle overlayed on the stage, top-right. Sits
-   above the native controls so it's always reachable and routes
-   through the iOS-safe webkitEnterFullscreen path. */
-.player-modal__fs {
-  position: absolute;
-  top: 0.7rem;
-  left: 0.7rem;
-  width: 34px;
-  height: 34px;
-  border: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.85);
-  color: #000;
-  cursor: pointer;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.18s ease, transform 0.18s ease;
-  -webkit-backdrop-filter: blur(4px);
-          backdrop-filter: blur(4px);
-}
-.player-modal__fs:hover {
-  background: #fff;
-  transform: scale(1.08);
-}
-.player-modal__fs svg { display: block; }
-
 /* Prev / next arrows for projects with multiple videos. Hidden by default
    (the [hidden] attribute); unhidden from JS when a project ships a
    videos[] array with more than one entry. Circular glass buttons that
@@ -691,13 +663,13 @@ body:has(.menu.is-open) .site-links {
 }
 .player-modal__nav[hidden] { display: none; }
 
-/* Counter — mono, small, editorial. Bottom-left of the stage: out of
-   the way of the close button (card top-right), the fullscreen button
-   (stage top-left) and the native video scrubber (which animates over
-   the bottom-centre, not the corner). */
+/* Counter — mono, small, editorial. Top-left of the stage: iOS native
+   controls live at the bottom (scrubber, play, time, fullscreen) and
+   the card's close button is top-right, so top-left is the one corner
+   that never fights with either set of controls. */
 .player-modal__counter {
   position: absolute;
-  bottom: clamp(0.9rem, 1.4vw, 1.3rem);
+  top: clamp(0.9rem, 1.4vw, 1.3rem);
   left: clamp(0.9rem, 1.4vw, 1.3rem);
   z-index: 3;
   padding: 0.32rem 0.6rem;
@@ -967,20 +939,12 @@ body.is-player-open .logo-btn {
   .player-modal__nav--prev { left: 0.55rem; }
   .player-modal__nav--next { right: 0.55rem; }
   .player-modal__counter {
-    bottom: 0.65rem;
+    top: 0.65rem;
     left: 0.65rem;
     font-size: 0.6rem;
     padding: 0.28rem 0.5rem;
   }
 
-  /* Fullscreen button out of the way on mobile — still one-tap
-     reachable but slightly smaller. */
-  .player-modal__fs {
-    width: 34px;
-    height: 34px;
-    top: 0.55rem;
-    left: 0.55rem;
-  }
 }
 
 /* ── Reduced Motion ── */
