@@ -1155,12 +1155,202 @@ function drawVignette(ctx, w, h) {
   const playerCounter = playerModal.querySelector('.player-modal__counter');
   const playerCountI  = playerModal.querySelector('.player-modal__counter-index');
   const playerCountT  = playerModal.querySelector('.player-modal__counter-total');
+  const playerCtrls   = playerModal.querySelector('[data-controls]');
+  const playerScrub   = playerModal.querySelector('[data-ctrl="scrub"]');
+  const playerProg    = playerModal.querySelector('[data-progress]');
+  const playerBuf     = playerModal.querySelector('[data-buffer]');
+  const playerThumb   = playerModal.querySelector('[data-thumb]');
+  const playerTimeEl  = playerModal.querySelector('[data-time]');
   let playerSnapshot = null;
 
-  // Fullscreen: removed custom button. The native <video controls>
-  // already exposes a fullscreen icon on every browser (Safari / iOS
-  // included via webkit paths), and the custom button was overlapping
-  // iOS's native controls. One control, one surface.
+  // ── Custom player controls ────────────────────────────────────────
+  // We render our own play/pause, scrubber, mute and fullscreen over
+  // the video so the UI reads identically on iOS, Android and desktop
+  // and never fights with platform-native controls. `controls` is off
+  // on the <video>; every state is driven from events on playerVideo.
+
+  function fmtTime(t) {
+    if (!isFinite(t) || t < 0) t = 0;
+    const m = Math.floor(t / 60);
+    const s = Math.floor(t % 60);
+    return m + ':' + (s < 10 ? '0' : '') + s;
+  }
+  function syncTimeUI() {
+    if (!playerVideo || !playerProg || !playerThumb || !playerTimeEl) return;
+    const dur = playerVideo.duration;
+    const cur = playerVideo.currentTime;
+    const pct = dur > 0 ? (cur / dur) * 100 : 0;
+    playerProg.style.width = pct.toFixed(2) + '%';
+    playerThumb.style.left = pct.toFixed(2) + '%';
+    playerTimeEl.textContent = fmtTime(cur) + ' / ' + fmtTime(dur);
+    if (playerScrub) playerScrub.setAttribute('aria-valuenow', Math.round(pct));
+  }
+  function syncBufferUI() {
+    if (!playerVideo || !playerBuf) return;
+    const dur = playerVideo.duration;
+    const b   = playerVideo.buffered;
+    if (!dur || !b || !b.length) { playerBuf.style.width = '0%'; return; }
+    // Use the buffered range that includes currentTime if available;
+    // falls back to the last buffered range.
+    let end = 0;
+    for (let i = 0; i < b.length; i++) {
+      if (b.start(i) <= playerVideo.currentTime && b.end(i) >= playerVideo.currentTime) {
+        end = b.end(i); break;
+      }
+      if (b.end(i) > end) end = b.end(i);
+    }
+    playerBuf.style.width = ((end / dur) * 100).toFixed(2) + '%';
+  }
+  function setPlayingClass() {
+    playerModal.classList.toggle('is-playing', !playerVideo.paused && !playerVideo.ended);
+    playerModal.classList.toggle('is-paused',  playerVideo.paused || playerVideo.ended);
+  }
+  function setMutedClass() {
+    playerModal.classList.toggle('is-muted', playerVideo.muted || playerVideo.volume === 0);
+  }
+
+  // Auto-hide the control overlay after 2.2 s of no pointer activity
+  // while the video is playing. Any pointer/touch inside the stage
+  // resets the timer. When paused, controls stay visible.
+  let hideTimer = null;
+  const HIDE_MS = 2200;
+  function showControls() {
+    if (!playerCtrls) return;
+    playerCtrls.classList.remove('is-hidden');
+    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+    if (!playerVideo.paused && !playerVideo.ended) {
+      hideTimer = setTimeout(() => playerCtrls.classList.add('is-hidden'), HIDE_MS);
+    }
+  }
+  function forceShowControls() {
+    if (!playerCtrls) return;
+    playerCtrls.classList.remove('is-hidden');
+    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+  }
+
+  // Native events on the video drive all UI state.
+  if (playerVideo) {
+    playerVideo.addEventListener('play',           () => { setPlayingClass(); showControls(); });
+    playerVideo.addEventListener('playing',        () => { setPlayingClass(); showControls(); });
+    playerVideo.addEventListener('pause',          () => { setPlayingClass(); forceShowControls(); });
+    playerVideo.addEventListener('ended',          () => { setPlayingClass(); forceShowControls(); });
+    playerVideo.addEventListener('volumechange',   setMutedClass);
+    playerVideo.addEventListener('timeupdate',     syncTimeUI);
+    playerVideo.addEventListener('progress',       syncBufferUI);
+    playerVideo.addEventListener('loadedmetadata', () => { syncTimeUI(); syncBufferUI(); setMutedClass(); });
+    playerVideo.addEventListener('loadeddata',     () => { syncTimeUI(); syncBufferUI(); });
+    // Tap on the video itself toggles play/pause.
+    playerVideo.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      togglePlay();
+    });
+  }
+
+  function togglePlay() {
+    if (!playerVideo) return;
+    if (playerVideo.paused || playerVideo.ended) {
+      const p = playerVideo.play();
+      if (p && typeof p.catch === 'function') {
+        p.catch(() => {
+          playerVideo.muted = true;
+          setMutedClass();
+          const p2 = playerVideo.play();
+          if (p2 && typeof p2.catch === 'function') p2.catch(() => {});
+        });
+      }
+    } else {
+      playerVideo.pause();
+    }
+  }
+
+  function toggleMute() {
+    if (!playerVideo) return;
+    playerVideo.muted = !playerVideo.muted;
+    setMutedClass();
+  }
+
+  function requestStageFullscreen() {
+    if (!playerVideo) return;
+    // iOS with playsinline only enters fullscreen through the webkit
+    // video-element method; other browsers use standard requestFullscreen
+    // on the stage so the card chrome also fills the screen.
+    if (typeof playerVideo.webkitEnterFullscreen === 'function') {
+      try { playerVideo.webkitEnterFullscreen(); return; } catch (e) { /* ignore */ }
+    }
+    const stage = playerVideo.parentElement;
+    const el    = stage || playerVideo;
+    const req   = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+    if (req) {
+      const p = req.call(el);
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    }
+  }
+
+  if (playerCtrls) {
+    playerCtrls.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-ctrl]');
+      if (!btn) return;
+      e.stopPropagation();
+      const kind = btn.dataset.ctrl;
+      if (kind === 'toggle-play')  togglePlay();
+      else if (kind === 'toggle-mute') toggleMute();
+      else if (kind === 'fullscreen')  requestStageFullscreen();
+    });
+  }
+
+  // Scrubber — click anywhere to seek, drag the thumb for scrub.
+  if (playerScrub) {
+    let scrubbing = false;
+    const seekToClientX = (clientX) => {
+      const r = playerScrub.getBoundingClientRect();
+      const pct = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+      if (isFinite(playerVideo.duration)) {
+        playerVideo.currentTime = pct * playerVideo.duration;
+        syncTimeUI();
+      }
+    };
+    const startScrub = (e) => {
+      scrubbing = true;
+      playerScrub.classList.add('is-scrubbing');
+      forceShowControls();
+      const x = e.touches ? e.touches[0].clientX : e.clientX;
+      seekToClientX(x);
+      e.preventDefault();
+    };
+    const moveScrub = (e) => {
+      if (!scrubbing) return;
+      const x = e.touches ? e.touches[0].clientX : e.clientX;
+      seekToClientX(x);
+      e.preventDefault();
+    };
+    const endScrub = () => {
+      if (!scrubbing) return;
+      scrubbing = false;
+      playerScrub.classList.remove('is-scrubbing');
+      showControls();
+    };
+    playerScrub.addEventListener('pointerdown', (e) => { try { playerScrub.setPointerCapture(e.pointerId); } catch (err) {} startScrub(e); });
+    playerScrub.addEventListener('pointermove', moveScrub);
+    playerScrub.addEventListener('pointerup',   endScrub);
+    playerScrub.addEventListener('pointercancel', endScrub);
+    // Keyboard support for accessibility
+    playerScrub.addEventListener('keydown', (e) => {
+      if (!isFinite(playerVideo.duration)) return;
+      const step = playerVideo.duration * 0.02;
+      if (e.key === 'ArrowRight') { playerVideo.currentTime = Math.min(playerVideo.duration, playerVideo.currentTime + step); e.preventDefault(); }
+      else if (e.key === 'ArrowLeft')  { playerVideo.currentTime = Math.max(0, playerVideo.currentTime - step); e.preventDefault(); }
+    });
+  }
+
+  // Pointer activity over the stage keeps the controls visible.
+  const playerStage = playerModal.querySelector('.player-modal__stage');
+  if (playerStage) {
+    const nudge = () => showControls();
+    playerStage.addEventListener('pointermove',  nudge);
+    playerStage.addEventListener('touchstart',   nudge, { passive: true });
+    playerStage.addEventListener('pointerenter', nudge);
+  }
 
   // Carousel state — scoped to the currently-open project. 0 entries = no
   // video, 1 entry = no nav UI, 2+ entries = arrows + counter.
@@ -1222,6 +1412,11 @@ function drawVignette(ctx, w, h) {
       }
     };
     try { playerVideo.pause(); } catch (e) { /* ignore */ }
+    // Reset classes so the big center play button shows immediately
+    // while the incoming clip is still loading; play/pause events will
+    // flip this once decoding begins.
+    playerModal.classList.remove('is-playing');
+    playerModal.classList.add('is-paused');
     if (fade) {
       // Carousel swap: the old clip fades out via .is-swapping while the
       // new one loads underneath. Src swap + play() still run
@@ -1341,10 +1536,13 @@ function drawVignette(ctx, w, h) {
 
   function closePlayer() {
     playerModal.classList.remove('is-open');
+    playerModal.classList.remove('is-playing');
+    playerModal.classList.remove('is-paused');
     playerModal.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('is-player-open');
     updateProjectNavVisibility();
     hideLoading();
+    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
     // Stop any playing video so audio doesn't continue behind the
     // scroll-scene after the modal closes.
     if (playerVideo) {

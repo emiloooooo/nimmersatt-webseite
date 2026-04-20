@@ -34,7 +34,7 @@ html, body {
   /* Skippable on click/tap — JS wires a one-shot listener that dismisses
      the overlay early. The pointer cursor is the visual affordance. */
   cursor: pointer;
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+  transition: opacity 0.42s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.42s;
 }
 
 .preloader.is-done {
@@ -52,6 +52,26 @@ html, body {
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
+}
+.preloader__hint {
+  position: absolute;
+  bottom: clamp(1.25rem, 4vw, 2.25rem);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Martian Mono', monospace;
+  font-weight: 300;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  /* Fade in after a beat so it doesn't fight the GIF's own entrance. */
+  opacity: 0;
+  animation: preloaderHintIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
+}
+@keyframes preloaderHintIn {
+  from { opacity: 0; transform: translate(-50%, 6px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
 }
 
 /* ── Canvases ──
@@ -589,6 +609,167 @@ body:has(.menu.is-open) .site-links {
   transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .player-modal__video.is-swapping { opacity: 0; }
+
+/* ── Custom video controls ──
+   Replace the native <video controls> UI with a single overlay that
+   renders identically across iOS / Android / desktop. Fades in on tap
+   and when paused, auto-hides during playback after MOUSE_IDLE_MS of
+   no pointer activity (handled in js/main.js). */
+.player-modal__controls {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.32s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.player-modal__controls.is-hidden {
+  opacity: 0;
+}
+.player-modal__controls > * { pointer-events: auto; }
+
+/* Big center play/pause — huge tap target, only visible when paused or
+   during fade-in. */
+.player-modal__center-btn {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: clamp(72px, 9vw, 112px);
+  height: clamp(72px, 9vw, 112px);
+  border-radius: 50%;
+  border: 0;
+  background: rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(12px) saturate(1.15);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.28s cubic-bezier(0.23, 1, 0.32, 1),
+              transform 0.28s cubic-bezier(0.23, 1, 0.32, 1);
+  opacity: 0;
+  pointer-events: none;
+}
+.player-modal__center-btn:hover { background: rgba(0, 0, 0, 0.6); transform: scale(1.04); }
+.player-modal__center-btn .icon { width: 46%; height: 46%; display: block; }
+.player-modal.is-paused .player-modal__center-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+.player-modal__center-btn .icon-pause { display: none; }
+
+/* Icon switching — default show play, .is-playing shows pause. Applies to
+   BOTH the bottom bar button and the center button. */
+.player-modal.is-playing .icon-play  { display: none; }
+.player-modal.is-playing .icon-pause { display: block; }
+.player-modal:not(.is-playing) .icon-pause { display: none; }
+
+/* Volume / mute icon swap */
+.player-modal.is-muted .icon-vol  { display: none; }
+.player-modal.is-muted .icon-mute { display: block; }
+.player-modal:not(.is-muted) .icon-mute { display: none; }
+
+/* Bottom bar — pill of glass sitting above the native scrubber area.
+   Gradient wash from black at the bottom gives the text contrast
+   without a hard bar edge. */
+.player-modal__bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.4rem, 0.9vw, 0.75rem);
+  padding: clamp(0.8rem, 2vw, 1.3rem) clamp(0.9rem, 1.8vw, 1.5rem) clamp(0.7rem, 1.6vw, 1.1rem);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
+  color: #fff;
+  font-family: 'Martian Mono', monospace;
+  font-weight: 300;
+}
+.player-modal__btn {
+  flex: 0 0 auto;
+  width: clamp(32px, 3vw, 40px);
+  height: clamp(32px, 3vw, 40px);
+  border-radius: 50%;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.player-modal__btn:hover,
+.player-modal__btn:focus-visible {
+  background: rgba(255, 255, 255, 0.16);
+  outline: none;
+}
+.player-modal__btn .icon { width: 60%; height: 60%; display: block; }
+
+.player-modal__time {
+  flex: 0 0 auto;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.85);
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  white-space: nowrap;
+}
+
+/* Scrubber — track + buffered-range hint + played progress + draggable
+   thumb. Click anywhere on the track to seek; drag the thumb to scrub. */
+.player-modal__scrubber {
+  position: relative;
+  flex: 1 1 auto;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  touch-action: none;
+}
+.player-modal__scrubber-track,
+.player-modal__scrubber-buffer,
+.player-modal__scrubber-progress {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 3px;
+  border-radius: 999px;
+}
+.player-modal__scrubber-track {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.22);
+}
+.player-modal__scrubber-buffer {
+  width: 0%;
+  background: rgba(255, 255, 255, 0.36);
+}
+.player-modal__scrubber-progress {
+  width: 0%;
+  background: #ffffff;
+}
+.player-modal__scrubber-thumb {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ffffff;
+  transform: translate(-50%, -50%) scale(1);
+  transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0);
+}
+.player-modal__scrubber:hover .player-modal__scrubber-thumb,
+.player-modal__scrubber.is-scrubbing .player-modal__scrubber-thumb {
+  transform: translate(-50%, -50%) scale(1.35);
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.12);
+}
 
 /* Loading overlay — covers the stage with the same intro GIF used in
    the preloader while a new clip fetches, so INDEX carousel switches
