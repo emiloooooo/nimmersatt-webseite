@@ -1200,36 +1200,41 @@ function drawVignette(ctx, w, h) {
 
   function setStageVideo(src, { fade } = { fade: false }) {
     if (!playerVideo) return;
+
+    // Try play(), with a muted fallback for strict autoplay configs.
+    // IMPORTANT: this must run synchronously inside the user-gesture
+    // call stack (menu tap, carousel arrow) — iOS Safari and mobile
+    // Chrome silently reject play() if the invocation is deferred to
+    // an async event handler that fires OUTSIDE the gesture, which is
+    // why the previous "wait for loadeddata, then play" flow left
+    // mobile with no playback at all.
+    const tryPlay = () => {
+      const p = playerVideo.play();
+      if (p && typeof p.catch === 'function') {
+        p.catch(() => {
+          // Unmuted play blocked by autoplay policy — retry muted so
+          // the clip still starts. User can unmute via native controls.
+          playerVideo.muted = true;
+          const p2 = playerVideo.play();
+          if (p2 && typeof p2.catch === 'function') p2.catch(() => {});
+        });
+      }
+    };
+
     const apply = () => {
       playerVideo.src   = encodeSrc(src);
-      // Start unmuted — the player is always opened through a user
-      // gesture (menu click, scene tap, carousel arrow), which satisfies
-      // every current browser's autoplay-with-sound policy. If that
-      // promise still rejects (stricter configs, Safari reader modes,
-      // etc.), fall back to muted so the clip at least starts and the
-      // user can unmute manually via the native controls.
       playerVideo.muted = false;
       try { playerVideo.load(); } catch (e) { /* ignore */ }
-      const tryPlay = () => {
-        const p = playerVideo.play();
-        if (p && typeof p.catch === 'function') {
-          p.catch(() => {
-            playerVideo.muted = true;
-            const p2 = playerVideo.play();
-            if (p2 && typeof p2.catch === 'function') p2.catch(() => {});
-          });
-        }
-      };
+      // Kick play NOW, while the user gesture is still in scope. The
+      // browser queues the request if the video isn't decodable yet
+      // and honours it on the first renderable frame.
+      tryPlay();
+      // Loader GIF overlay until the incoming clip has its first frame.
+      showLoading();
       const onReady = () => {
         playerVideo.classList.remove('is-swapping');
         hideLoading();
-        tryPlay();
       };
-      // Show the loader GIF overlay until the incoming clip is decodable.
-      // `loadeddata` is the earliest event at which the first frame is
-      // renderable; `canplay` is a safety fallback for browsers that
-      // fire the events out of the spec order on slow networks.
-      showLoading();
       if (playerVideo.readyState >= 2) onReady();
       else {
         playerVideo.addEventListener('loadeddata', onReady, { once: true });
@@ -1238,8 +1243,11 @@ function drawVignette(ctx, w, h) {
     };
     try { playerVideo.pause(); } catch (e) { /* ignore */ }
     if (fade) {
+      // Carousel swap: the old clip fades out via .is-swapping while the
+      // new one loads underneath. Src swap + play() still run
+      // synchronously so the user gesture remains in scope.
       playerVideo.classList.add('is-swapping');
-      setTimeout(apply, 180);
+      apply();
     } else {
       apply();
     }
