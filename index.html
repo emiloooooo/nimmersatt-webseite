@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rock+3D&family=Martian+Mono:wght@300;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=43">
+  <link rel="stylesheet" href="css/style.css?v=45">
   <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -86,7 +86,9 @@
   <div id="player-modal" class="player-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="player-title">
     <div class="player-modal__backdrop" data-close></div>
     <article class="player-modal__card">
-      <button class="player-modal__close" type="button" aria-label="Schließen" data-close>×</button>
+      <button class="player-modal__close" type="button" aria-label="Schließen" data-close>
+        <img class="player-modal__close-icon" src="assets/icon-close.png?v=1" alt="" aria-hidden="true" draggable="false">
+      </button>
       <div class="player-modal__stage">
         <!-- Video shown when a project.video path is present; otherwise
              hidden and the fallback below takes its place. Native
@@ -118,8 +120,8 @@
               <svg class="icon icon-vol" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z" fill="currentColor"/></svg>
               <svg class="icon icon-mute" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm11.5 3-3-3v6l3-3zm3.2-5.2L17.3 8.2 19.6 10.5l-2.3 2.3 1.4 1.4 2.3-2.3 2.3 2.3 1.4-1.4L22.4 10.5l2.3-2.3-1.4-1.4-2.3 2.3z" fill="currentColor"/></svg>
             </button>
-            <button class="player-modal__btn" type="button" aria-label="Vollbild" data-ctrl="fullscreen">
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <button class="player-modal__btn player-modal__btn--fullscreen" type="button" aria-label="Vollbild" data-ctrl="fullscreen">
+              <img class="player-modal__fullscreen-icon" src="assets/icon-fullscreen.png?v=1" alt="" aria-hidden="true" draggable="false">
             </button>
           </div>
         </div>
@@ -156,7 +158,7 @@
     </article>
   </div>
 
-  <script src="js/main.js?v=67"></script>
+  <script src="js/main.js?v=68"></script>
   <script src="js/chime.js?v=10"></script>
 </body>
 </html>

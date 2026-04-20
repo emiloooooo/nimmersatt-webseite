@@ -747,6 +747,23 @@ function drawVignette(ctx, w, h) {
     preloader.addEventListener(evt, skipPreloader);
   });
 
+  // Return-from-legal flow: when the user clicks "← Back" on
+  // impressum.html / datenschutz.html, the link sends them to "/#menu".
+  // Detect the hash here, force-skip the preloader on the first frame,
+  // and open the menu so they land back where they tapped Imprint /
+  // Privacy instead of watching the loader again. setMenu is declared
+  // later in the IIFE, so we defer the open call until after its
+  // definition using a microtask.
+  if (window.location.hash === '#menu') {
+    skipPreloader();
+    queueMicrotask(() => {
+      if (typeof setMenu === 'function') setMenu(true);
+      // Clean the hash without adding a history entry so the URL stays
+      // at "/" once the menu is open.
+      try { history.replaceState(null, '', window.location.pathname); } catch (e) {}
+    });
+  }
+
   loader.onFirstPriority = () => {
     if (!isReady) {
       isReady = true;
