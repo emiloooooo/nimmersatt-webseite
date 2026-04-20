@@ -244,6 +244,7 @@ html, body {
   color: #000;
 }
 body.is-player-open .site-links,
+body.is-menu-open .site-links,
 body:has(.menu.is-open) .site-links {
   opacity: 0;
   pointer-events: none;

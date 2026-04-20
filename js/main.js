@@ -1420,6 +1420,7 @@ function drawVignette(ctx, w, h) {
     menu.setAttribute('aria-hidden', open ? 'false' : 'true');
     logoBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     logoBtn.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+    document.body.classList.toggle('is-menu-open', open);
     updateProjectNavVisibility();
     // Reset scroll state every time the menu opens OR closes so the
     // first view always starts collapsed (25vh bottom quarter) and a
