@@ -544,8 +544,11 @@ html, body {
   position: absolute;
   top: clamp(0.7rem, 1.2vw, 1.1rem);
   right: clamp(0.7rem, 1.2vw, 1.1rem);
-  width: clamp(42px, 4vw, 56px);
-  height: clamp(42px, 4vw, 56px);
+  /* Bigger than the bar buttons so the torn-paper X has presence on
+     the card — bumped again at user's request so it reads as a clear,
+     tactile affordance rather than a tiny chip. */
+  width: clamp(52px, 5.2vw, 72px);
+  height: clamp(52px, 5.2vw, 72px);
   padding: 0;
   border: 0;
   background: transparent;
@@ -1127,12 +1130,23 @@ body.is-player-open .logo-btn {
     line-height: 1.65;
   }
 
+  /* Mobile close: matches the desktop torn-paper X treatment — no pill
+     background, just the icon with its tight drop shadow. Sized up from
+     the old 40 px because the new graphic is a recognisable mark, not a
+     text × that needed a container. 52 px keeps a generous tap target. */
   .player-modal__close {
-    top: 0.75rem;
-    right: 0.75rem;
-    width: 40px;
-    height: 40px;
-    font-size: 1.2rem;
+    top: 0.6rem;
+    right: 0.6rem;
+    width: 54px;
+    height: 54px;
+    font-size: 0;
+  }
+  /* Mobile fullscreen: a touch smaller than desktop's 48–64 so the
+     bottom bar still breathes, but clearly larger than the other bar
+     buttons so the custom graphic is readable on a phone. */
+  .player-modal__btn--fullscreen {
+    width: 46px;
+    height: 46px;
   }
 
   /* Compact the carousel nav for mobile so it doesn't crowd the video
