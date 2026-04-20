@@ -1343,12 +1343,19 @@ function drawVignette(ctx, w, h) {
       project = PROJECTS[projectIdx];
     }
     if (!project) return;
-    populatePlayer(project);
+    // Make the modal visible BEFORE populating the video. iOS Safari
+    // and mobile Chrome suspend load() / play() on a <video> inside a
+    // visibility:hidden container — the previous order left the clip
+    // loading forever on phones because setStageVideo ran while the
+    // modal was still hidden. Opening the modal first guarantees the
+    // element is part of the visible render tree when load() / play()
+    // run, so the user gesture carries through to actual playback.
     playerSnapshot = { currentPos, targetPos, inDeadzone, deadzoneAt, deadzoneAccum };
     playerSource = source;
     playerModal.classList.add('is-open');
     playerModal.setAttribute('aria-hidden', 'false');
     document.body.classList.add('is-player-open');
+    populatePlayer(project);
     updateProjectNavVisibility();
   }
 
@@ -1479,11 +1486,18 @@ function drawVignette(ctx, w, h) {
   }, { passive: false, capture: true });
   window.addEventListener('touchmove', (e) => {
     if (!isMenuOpen() || menuTouchY === null) return;
+    // Mobile: the menu list is static; the only reason to handle the
+    // touchmove here is to stop the page scene behind from scrubbing.
+    // We preventDefault for that, but DO NOT stopPropagation — the
+    // chime module needs the same touchmove to drive "drag across
+    // names to play the pentatonic notes". The earlier stopPropagation
+    // swallowed the event before chime.js ever saw it.
+    if (isMobileNow()) {
+      e.preventDefault();
+      return;
+    }
     e.preventDefault();
     e.stopPropagation();
-    // Mobile: no menu-scroll — the list is static and entirely visible.
-    // Still preventDefault so the scene behind cannot scrub.
-    if (isMobileNow()) return;
     const y   = e.touches[0].clientY;
     const dy  = menuTouchY - y;
     menuTouchY = y;
