@@ -124,10 +124,10 @@ const PROJECTS = [
     body:  'Brand development, strategy and supervision across ten campaigns shipped in three months, grounded in one shared visual system that scaled across print, screen and space.',
     description: null,
     videos: [
+      'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/index-000018.mp4',
       'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/index-kleider.mp4',
       'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/index-nos004.mp4',
       'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/index-000014.mp4',
-      'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/index-000018.mp4',
       'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/index-000020.mp4',
       'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/index-000022.mp4',
     ],
@@ -146,7 +146,10 @@ const PROJECTS = [
       'Initiated through Universal Music, this project was part of a larger visual rollout for the artist\'s debut. The track required a 2D visualizer that utilized a heavy-asset workflow, a new technical direction for the production team.\n\n' +
       'The focus was on the synergy between typography and motion graphics. By managing the flow between different graphic layers, we created a 2D environment that felt kinetic and synchronized with the track\u2019s rhythm.\n\n' +
       'In November 2025, the project involved managing an extensive volume of data. The timeline integrated over 1,000 individual images and 50 typefaces, requiring a precise digital arrangement to ensure a cohesive visual experience.',
-    video: null,
+    videos: [
+      'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/soyhan-gta-wedding.mp4',
+      'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/soyhan-push-push.mp4',
+    ],
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
       { label: 'Location',  value: 'Berlin' },
@@ -853,12 +856,30 @@ function drawVignette(ctx, w, h) {
     targetPos = nearestStop + dir * CYCLE_STEP;
   }
 
+  const projectFade = document.querySelector('.project-fade');
+  function flashProjectFade() {
+    if (!projectFade) return;
+    // Restart the keyframe cleanly even on rapid repeat-taps: strip
+    // the class, force a reflow, re-add on next frame. Without the
+    // reflow the animation would skip and a fast double-tap would
+    // look unresponsive.
+    projectFade.classList.remove('is-active');
+    void projectFade.offsetWidth;
+    projectFade.classList.add('is-active');
+  }
+  if (projectFade) {
+    projectFade.addEventListener('animationend', () => {
+      projectFade.classList.remove('is-active');
+    });
+  }
+
   if (projectNav) {
     projectNav.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-project-nav]');
       if (!btn) return;
       if (!sceneReadyForInteraction) return;
       e.stopPropagation();
+      flashProjectFade();
       jumpProjects(btn.dataset.projectNav === 'next' ? 1 : -1);
     });
   }

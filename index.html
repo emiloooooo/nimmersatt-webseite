@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rock+3D&family=Martian+Mono:wght@300;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=46">
+  <link rel="stylesheet" href="css/style.css?v=48">
   <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -68,6 +68,12 @@
     <h1 class="text-title"></h1>
     <p class="text-body"></p>
   </div>
+
+  <!-- Mobile project-step fade flash — a soft white veil that breathes
+       over the scene for ~400 ms when the bottom nav buttons advance
+       the project, so the jump reads as a gentle crossfade instead of
+       a hard cut. Mobile-only via CSS. -->
+  <div class="project-fade" aria-hidden="true"></div>
 
   <!-- Mobile project-step nav — shown only on narrow viewports. Each
        click advances the scroll scene by one full project cycle so the
@@ -158,7 +164,7 @@
     </article>
   </div>
 
-  <script src="js/main.js?v=69"></script>
+  <script src="js/main.js?v=71"></script>
   <script src="js/chime.js?v=10"></script>
 </body>
 </html>
