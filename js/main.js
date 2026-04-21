@@ -1359,11 +1359,37 @@ function drawVignette(ctx, w, h) {
     setMutedClass();
   }
 
-  function requestStageFullscreen() {
+  function toggleStageFullscreen() {
     if (!playerVideo) return;
-    // iOS with playsinline only enters fullscreen through the webkit
-    // video-element method; other browsers use standard requestFullscreen
-    // on the stage so the card chrome also fills the screen.
+    // Are we currently in fullscreen? Check every vendor-prefixed
+    // variant — iOS Safari uses webkitDisplayingFullscreen on the
+    // <video>, other browsers set a document-level fullscreen element.
+    const docFsEl = document.fullscreenElement
+                 || document.webkitFullscreenElement
+                 || document.mozFullScreenElement
+                 || document.msFullscreenElement;
+    const iosVideoFs = !!playerVideo.webkitDisplayingFullscreen;
+    if (docFsEl || iosVideoFs) {
+      // Exit
+      if (iosVideoFs && typeof playerVideo.webkitExitFullscreen === 'function') {
+        try { playerVideo.webkitExitFullscreen(); return; } catch (e) { /* ignore */ }
+      }
+      const exit = document.exitFullscreen
+                || document.webkitExitFullscreen
+                || document.mozCancelFullScreen
+                || document.msExitFullscreen;
+      if (exit) {
+        try {
+          const p = exit.call(document);
+          if (p && typeof p.catch === 'function') p.catch(() => {});
+        } catch (e) { /* ignore */ }
+      }
+      return;
+    }
+    // Enter — iOS with playsinline only enters fullscreen through the
+    // webkit video-element method; other browsers use standard
+    // requestFullscreen on the stage so the card chrome also fills
+    // the screen.
     if (typeof playerVideo.webkitEnterFullscreen === 'function') {
       try { playerVideo.webkitEnterFullscreen(); return; } catch (e) { /* ignore */ }
     }
@@ -1384,7 +1410,7 @@ function drawVignette(ctx, w, h) {
       const kind = btn.dataset.ctrl;
       if (kind === 'toggle-play')  togglePlay();
       else if (kind === 'toggle-mute') toggleMute();
-      else if (kind === 'fullscreen')  requestStageFullscreen();
+      else if (kind === 'fullscreen')  toggleStageFullscreen();
     });
   }
 
