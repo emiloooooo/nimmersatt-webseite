@@ -106,11 +106,11 @@ const PROJECTS = [
   {
     title: 'FW26 (Berlin Fashion Week)',
     slug:  'garage',
-    body:  "Four brands, two days, one legendary garage. A 48-hour all-service production with REFERENCE STUDIO at KANT GARAGE, where the venue's raw industrial character shaped the visual tone across every presentation.",
+    body:  "Four brands, two days, one legendary garage. A 48 hour production we ran with REFERENCE STUDIO at KANT GARAGE, where the raw industrial character of the space shaped the look of every presentation.",
     description:
-      "The production served as the full-service anchor for FW26 during Berlin Fashion Week, staged in partnership with REFERENCE STUDIO. The brief covered four distinct fashion brands, each requiring individual direction while sharing a unified venue identity.\n\n" +
-      "The legendary KANT GARAGE provided more than a backdrop — its raw industrial character shaped the visual tone across every presentation. The challenge was calibrating lighting, staging, and audience flow so that each brand could read as its own world within the shared architectural envelope.\n\n" +
-      "Compressed into a 48-hour window in 2025, the operation required tight logistical coordination across brand teams, talent, and technical crew. All-service production meant carrying every phase — from pre-production through on-site direction to final delivery — inside a continuous two-day cycle.",
+      "We ran the full production for FW26 during Berlin Fashion Week together with REFERENCE STUDIO. Four fashion brands shared the same venue, but each one needed its own voice, its own direction, its own moment.\n\n" +
+      "The KANT GARAGE wasn\u2019t just a backdrop. Its raw industrial character bled into every look we built, and a lot of the work went into calibrating lighting, staging, and audience flow so every brand could land as its own world inside the same space.\n\n" +
+      "The whole thing happened in a 48 hour window in 2025. Tight coordination across brand teams, talent, and crew. Every phase of the production, from planning to direction on the floor through to final delivery, lived inside those two continuous days.",
     video: null,
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
