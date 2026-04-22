@@ -24,8 +24,11 @@ const PROJECTS = [
   {
     title: 'Stylo - Alles Gut (Short Film)',
     slug:  'berlin-klohaus',
-    body:  "A couple's story threaded through Berlin's everyday life, told as a short drama built on invisible transitions where the quiet moments carry the narrative.",
-    description: null,
+    body:  "A couple's story framed within Berlin's everyday rhythm.",
+    description:
+      "The project was developed as a short dramatic film following a couple moving through the texture of Berlin daily life. Set within a Klohaus location, the narrative focused on quiet emotional turns rather than plot mechanics, using the city itself as a silent third character.\n\n" +
+      "The defining craft element was the use of invisible transitions — edit points engineered to dissolve between scenes without pulling the viewer out. This required meticulous pre-planning of blocking, continuity, and camera placement so that shifts in time and space could be absorbed rather than announced.\n\n" +
+      "Produced in 2025, the shoot operated as a full short drama set, balancing the intimacy of the two-character arc with the technical discipline of continuous narrative. The result placed the audience inside the couple's story instead of observing it from the outside.",
     video: 'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/stylo.mp4',
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
@@ -43,8 +46,11 @@ const PROJECTS = [
   {
     title: '032c x CUPRA (Collaboration)',
     slug:  'paris',
-    body:  "An urban fashion vibe meeting Cupra in the middle of Paris Fashion Week, where the city itself became the set and street tempo met sharper brand lines in one editorial frame.",
-    description: null,
+    body:  "Urban fashion energy meeting automotive identity inside Paris Fashion Week.",
+    description:
+      "The project was produced as a collaboration between 032c and CUPRA, anchored in the urban fashion sensibility that defines the 032c world. The brief was to carry CUPRA into that aesthetic context without diluting either side — fashion codes holding the surface, automotive identity sitting underneath.\n\n" +
+      "Timed to coincide with Paris Fashion Week, the production operated inside the compressed schedule of the event calendar. Shooting and direction had to navigate the logistical reality of Paris during fashion week while still delivering a piece that felt deliberate rather than reactive.\n\n" +
+      "Completed in 2024, the final work sat at the intersection of fashion media and brand collaboration, translating CUPRA into a language that read naturally alongside 032c's editorial world.",
     video: null,
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
@@ -85,8 +91,11 @@ const PROJECTS = [
   {
     title: 'SS26 (Berlin Fashion Week)',
     slug:  'berlin',
-    body:  'Four brands across two days at the legendary Funkturmpalais, produced with Reference Studio. We handled lighting, camera, crew and post so every brand arrived runway ready.',
-    description: null,
+    body:  'Four brands across two days at Funkturmpalais.',
+    description:
+      "The SS26 edition of Berlin Fashion Week continued the partnership with REFERENCE STUDIO, again covering four brands inside a two-day production window. This time the operation moved to the legendary FUNKTURMPALAIS, a venue whose distinct character reshaped the visual language of the presentations.\n\n" +
+      "Where the previous edition leaned into raw industrial texture, Funkturmpalais called for a more considered approach — its historical weight and architectural character required staging decisions that honored the space while letting each brand remain clearly its own.\n\n" +
+      "Delivered in 2025, the shoot functioned as a complete all-service production, covering pre-production planning, on-site direction, and final output. The result was a second chapter of a recurring collaboration that demonstrated the scalability of the format across seasons and venues.",
     video: null,
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
@@ -97,8 +106,11 @@ const PROJECTS = [
   {
     title: 'FW26 (Berlin Fashion Week)',
     slug:  'garage',
-    body:  'Four brands across two days at the legendary Kant Garage, produced with Reference Studio. We handled lighting, camera, crew and post so every brand arrived runway ready.',
-    description: null,
+    body:  'Four brands, two days, one legendary garage.',
+    description:
+      "The production served as the full-service anchor for FW26 during Berlin Fashion Week, staged in partnership with REFERENCE STUDIO. The brief covered four distinct fashion brands, each requiring individual direction while sharing a unified venue identity.\n\n" +
+      "The legendary KANT GARAGE provided more than a backdrop — its raw industrial character shaped the visual tone across every presentation. The challenge was calibrating lighting, staging, and audience flow so that each brand could read as its own world within the shared architectural envelope.\n\n" +
+      "Compressed into a 48-hour window in 2025, the operation required tight logistical coordination across brand teams, talent, and technical crew. All-service production meant carrying every phase — from pre-production through on-site direction to final delivery — inside a continuous two-day cycle.",
     video: null,
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
@@ -109,8 +121,11 @@ const PROJECTS = [
   {
     title: 'Whispers - WINTERGARTEN (Short Film)',
     slug:  'hermannplatz',
-    body:  'Following Berlin youth culture through a story of abuse and trauma, a patient, unflinching short film told close to the people it portrays rather than over them.',
-    description: null,
+    body:  "A quiet confrontation with the stories Berlin's youth rarely speak aloud.",
+    description:
+      "The short film was developed to follow a thread of Berlin youth culture that usually stays outside the frame. Anchored around Hermannplatz and the Wintergarten location, it approached a story of abuse and trauma with the intent of making space for a generation of boys whose experiences often remain unspoken.\n\n" +
+      "The directing approach prioritized restraint over spectacle. Rather than dramatizing the subject matter, the production leaned into silences, textures, and environmental detail — using the familiar geography of Berlin as a holding space for something heavier than what appears on screen.\n\n" +
+      "Produced in 2025, the project was positioned less as a film to be consumed and more as a signal to be received. The goal was to speak for a new generation of boys and a side of Berlin that rarely gets represented on its own terms.",
     video: 'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/whispers-wintergarten.mp4',
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
@@ -121,8 +136,11 @@ const PROJECTS = [
   {
     title: 'index® (Brand Identity)',
     slug:  'portugal',
-    body:  'Brand development, strategy and supervision across ten campaigns shipped in three months, grounded in one shared visual system that scaled across print, screen and space.',
-    description: null,
+    body:  'A brand built from Porto, campaign by campaign.',
+    description:
+      "The engagement was a long-form brand development project for index\u00ae, combining strategic direction with hands-on supervision across every phase. The work covered identity foundations, campaign architecture, and the operational rhythm required to take the brand to market.\n\n" +
+      "Ten campaigns were produced and rolled out within three months — a pace that required building the brand system and the production pipeline simultaneously. Each campaign functioned as its own brief while also feeding back into the wider identity, tightening the visual language with every release.\n\n" +
+      "Based in Porto across 2024, the project combined strategic oversight with production supervision, acting as both creative and operational throughline. The outcome was a brand identity that emerged not from a single launch moment but from the cumulative weight of ten coordinated campaigns.",
     videos: [
       'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/index-000018.mp4',
       'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/index-kleider.mp4',
@@ -146,10 +164,7 @@ const PROJECTS = [
       'Initiated through Universal Music, this project was part of a larger visual rollout for the artist\'s debut. The track required a 2D visualizer that utilized a heavy-asset workflow, a new technical direction for the production team.\n\n' +
       'The focus was on the synergy between typography and motion graphics. By managing the flow between different graphic layers, we created a 2D environment that felt kinetic and synchronized with the track\u2019s rhythm.\n\n' +
       'In November 2025, the project involved managing an extensive volume of data. The timeline integrated over 1,000 individual images and 50 typefaces, requiring a precise digital arrangement to ensure a cohesive visual experience.',
-    videos: [
-      'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/soyhan-gta-wedding.mp4',
-      'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/soyhan-push-push.mp4',
-    ],
+    video: 'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/soyhan-push-push.mp4',
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
       { label: 'Location',  value: 'Berlin' },
