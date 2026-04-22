@@ -24,7 +24,7 @@ const PROJECTS = [
   {
     title: 'Stylo - Alles Gut (Short Film)',
     slug:  'berlin-klohaus',
-    body:  "A couple's story framed within Berlin's everyday rhythm.",
+    body:  "A couple's story framed within Berlin's everyday rhythm. A short drama built on invisible transitions, where quiet emotional turns carry the narrative and the city acts as a silent third character.",
     description:
       "The project was developed as a short dramatic film following a couple moving through the texture of Berlin daily life. Set within a Klohaus location, the narrative focused on quiet emotional turns rather than plot mechanics, using the city itself as a silent third character.\n\n" +
       "The defining craft element was the use of invisible transitions — edit points engineered to dissolve between scenes without pulling the viewer out. This required meticulous pre-planning of blocking, continuity, and camera placement so that shifts in time and space could be absorbed rather than announced.\n\n" +
@@ -46,7 +46,7 @@ const PROJECTS = [
   {
     title: '032c x CUPRA (Collaboration)',
     slug:  'paris',
-    body:  "Urban fashion energy meeting automotive identity inside Paris Fashion Week.",
+    body:  "Urban fashion energy meeting automotive identity inside Paris Fashion Week. A collaboration with 032c where fashion codes hold the surface and CUPRA sits underneath, carried through the compressed rhythm of the event calendar.",
     description:
       "The project was produced as a collaboration between 032c and CUPRA, anchored in the urban fashion sensibility that defines the 032c world. The brief was to carry CUPRA into that aesthetic context without diluting either side — fashion codes holding the surface, automotive identity sitting underneath.\n\n" +
       "Timed to coincide with Paris Fashion Week, the production operated inside the compressed schedule of the event calendar. Shooting and direction had to navigate the logistical reality of Paris during fashion week while still delivering a piece that felt deliberate rather than reactive.\n\n" +
@@ -91,7 +91,7 @@ const PROJECTS = [
   {
     title: 'SS26 (Berlin Fashion Week)',
     slug:  'berlin',
-    body:  'Four brands across two days at Funkturmpalais.',
+    body:  "Four brands across two days at the legendary Funkturmpalais. A full-service production with REFERENCE STUDIO where the venue's historical weight shaped every staging decision, each brand holding its own within the shared architectural envelope.",
     description:
       "The SS26 edition of Berlin Fashion Week continued the partnership with REFERENCE STUDIO, again covering four brands inside a two-day production window. This time the operation moved to the legendary FUNKTURMPALAIS, a venue whose distinct character reshaped the visual language of the presentations.\n\n" +
       "Where the previous edition leaned into raw industrial texture, Funkturmpalais called for a more considered approach — its historical weight and architectural character required staging decisions that honored the space while letting each brand remain clearly its own.\n\n" +
@@ -106,7 +106,7 @@ const PROJECTS = [
   {
     title: 'FW26 (Berlin Fashion Week)',
     slug:  'garage',
-    body:  'Four brands, two days, one legendary garage.',
+    body:  "Four brands, two days, one legendary garage. A 48-hour all-service production with REFERENCE STUDIO at KANT GARAGE, where the venue's raw industrial character shaped the visual tone across every presentation.",
     description:
       "The production served as the full-service anchor for FW26 during Berlin Fashion Week, staged in partnership with REFERENCE STUDIO. The brief covered four distinct fashion brands, each requiring individual direction while sharing a unified venue identity.\n\n" +
       "The legendary KANT GARAGE provided more than a backdrop — its raw industrial character shaped the visual tone across every presentation. The challenge was calibrating lighting, staging, and audience flow so that each brand could read as its own world within the shared architectural envelope.\n\n" +
@@ -121,7 +121,7 @@ const PROJECTS = [
   {
     title: 'Whispers - WINTERGARTEN (Short Film)',
     slug:  'hermannplatz',
-    body:  "A quiet confrontation with the stories Berlin's youth rarely speak aloud.",
+    body:  "A quiet confrontation with the stories Berlin's youth rarely speak aloud. A short film built around Hermannplatz and Wintergarten, leaning into silences and textures rather than spectacle to make space for a generation of boys.",
     description:
       "The short film was developed to follow a thread of Berlin youth culture that usually stays outside the frame. Anchored around Hermannplatz and the Wintergarten location, it approached a story of abuse and trauma with the intent of making space for a generation of boys whose experiences often remain unspoken.\n\n" +
       "The directing approach prioritized restraint over spectacle. Rather than dramatizing the subject matter, the production leaned into silences, textures, and environmental detail — using the familiar geography of Berlin as a holding space for something heavier than what appears on screen.\n\n" +
@@ -136,7 +136,7 @@ const PROJECTS = [
   {
     title: 'index® (Brand Identity)',
     slug:  'portugal',
-    body:  'A brand built from Porto, campaign by campaign.',
+    body:  "A brand built from Porto, campaign by campaign. Ten campaigns rolled out in three months — identity, strategy and production supervision moving as one throughline, the visual language tightening with every release.",
     description:
       "The engagement was a long-form brand development project for index\u00ae, combining strategic direction with hands-on supervision across every phase. The work covered identity foundations, campaign architecture, and the operational rhythm required to take the brand to market.\n\n" +
       "Ten campaigns were produced and rolled out within three months — a pace that required building the brand system and the production pipeline simultaneously. Each campaign functioned as its own brief while also feeding back into the wider identity, tightening the visual language with every release.\n\n" +
