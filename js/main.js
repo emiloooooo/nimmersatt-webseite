@@ -91,7 +91,7 @@ const PROJECTS = [
   {
     title: 'SS26 (Berlin Fashion Week)',
     slug:  'berlin',
-    body:  "Four brands across two days at the legendary Funkturmpalais. A full-service production with REFERENCE STUDIO where the venue's historical weight shaped every staging decision, each brand holding its own within the shared architectural envelope.",
+    body:  "Four brands across two days at the legendary Funkturmpalais. A full-service production with REFERENCE STUDIO where the venue's historical weight shaped every staging decision.",
     description:
       "The SS26 edition of Berlin Fashion Week continued the partnership with REFERENCE STUDIO, again covering four brands inside a two-day production window. This time the operation moved to the legendary FUNKTURMPALAIS, a venue whose distinct character reshaped the visual language of the presentations.\n\n" +
       "Where the previous edition leaned into raw industrial texture, Funkturmpalais called for a more considered approach — its historical weight and architectural character required staging decisions that honored the space while letting each brand remain clearly its own.\n\n" +
