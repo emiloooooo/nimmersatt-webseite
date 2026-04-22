@@ -27,7 +27,7 @@ const PROJECTS = [
     body:  "A couple's story framed within Berlin's everyday rhythm. A short drama built on invisible transitions, where quiet emotional turns carry the narrative and the city acts as a silent third character.",
     description:
       "The project was developed as a short dramatic film following a couple moving through the texture of Berlin daily life. Set within a Klohaus location, the narrative focused on quiet emotional turns rather than plot mechanics, using the city itself as a silent third character.\n\n" +
-      "The defining craft element was the use of invisible transitions — edit points engineered to dissolve between scenes without pulling the viewer out. This required meticulous pre-planning of blocking, continuity, and camera placement so that shifts in time and space could be absorbed rather than announced.\n\n" +
+      "The defining craft choice was the use of invisible transitions. Edit points built to dissolve between scenes without ever pulling the viewer out. It took careful pre-planning of blocking, continuity and camera placement so that shifts in time and space could be absorbed rather than announced.\n\n" +
       "Produced in 2025, the shoot operated as a full short drama set, balancing the intimacy of the two-character arc with the technical discipline of continuous narrative. The result placed the audience inside the couple's story instead of observing it from the outside.",
     video: 'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/stylo.mp4',
     credits: [
@@ -48,7 +48,7 @@ const PROJECTS = [
     slug:  'paris',
     body:  "Urban fashion energy meeting automotive identity inside Paris Fashion Week. A collaboration with 032c where fashion codes hold the surface and CUPRA sits underneath, carried through the compressed rhythm of the event calendar.",
     description:
-      "The project was produced as a collaboration between 032c and CUPRA, anchored in the urban fashion sensibility that defines the 032c world. The brief was to carry CUPRA into that aesthetic context without diluting either side — fashion codes holding the surface, automotive identity sitting underneath.\n\n" +
+      "The project came out of a collaboration between 032c and CUPRA, rooted in the urban fashion sensibility that defines the 032c world. The brief was to bring CUPRA into that context without diluting either side, letting fashion codes hold the surface while the automotive identity sat underneath.\n\n" +
       "Timed to coincide with Paris Fashion Week, the production operated inside the compressed schedule of the event calendar. Shooting and direction had to navigate the logistical reality of Paris during fashion week while still delivering a piece that felt deliberate rather than reactive.\n\n" +
       "Completed in 2024, the final work sat at the intersection of fashion media and brand collaboration, translating CUPRA into a language that read naturally alongside 032c's editorial world.",
     video: 'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/cupra-everything-counts.mp4',
@@ -94,7 +94,7 @@ const PROJECTS = [
     body:  "Four brands across two days at the legendary Funkturmpalais. A full-service production with REFERENCE STUDIO where the venue's historical weight shaped every staging decision.",
     description:
       "The SS26 edition of Berlin Fashion Week continued the partnership with REFERENCE STUDIO, again covering four brands inside a two-day production window. This time the operation moved to the legendary FUNKTURMPALAIS, a venue whose distinct character reshaped the visual language of the presentations.\n\n" +
-      "Where the previous edition leaned into raw industrial texture, Funkturmpalais called for a more considered approach — its historical weight and architectural character required staging decisions that honored the space while letting each brand remain clearly its own.\n\n" +
+      "Where the previous edition leaned into raw industrial texture, Funkturmpalais called for a more considered approach. Its historical weight and architectural character asked for staging decisions that honoured the space while letting each brand remain clearly its own.\n\n" +
       "Delivered in 2025, the shoot functioned as a complete all-service production, covering pre-production planning, on-site direction, and final output. The result was a second chapter of a recurring collaboration that demonstrated the scalability of the format across seasons and venues.",
     video: null,
     credits: [
@@ -124,7 +124,7 @@ const PROJECTS = [
     body:  "A quiet confrontation with the stories Berlin's youth rarely speak aloud. A short film built around Hermannplatz and Wintergarten, leaning into silences and textures rather than spectacle to make space for a generation of boys.",
     description:
       "The short film was developed to follow a thread of Berlin youth culture that usually stays outside the frame. Anchored around Hermannplatz and the Wintergarten location, it approached a story of abuse and trauma with the intent of making space for a generation of boys whose experiences often remain unspoken.\n\n" +
-      "The directing approach prioritized restraint over spectacle. Rather than dramatizing the subject matter, the production leaned into silences, textures, and environmental detail — using the familiar geography of Berlin as a holding space for something heavier than what appears on screen.\n\n" +
+      "The directing approach chose restraint over spectacle. Rather than dramatising the subject matter, the production leaned into silences, textures and environmental detail, using the familiar geography of Berlin as a holding space for something heavier than what you actually see on screen.\n\n" +
       "Produced in 2025, the project was positioned less as a film to be consumed and more as a signal to be received. The goal was to speak for a new generation of boys and a side of Berlin that rarely gets represented on its own terms.",
     video: 'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/whispers-wintergarten.mp4',
     credits: [
@@ -136,10 +136,10 @@ const PROJECTS = [
   {
     title: 'index® (Brand Identity)',
     slug:  'portugal',
-    body:  "A brand built from Porto, campaign by campaign. Ten campaigns rolled out in three months — identity, strategy and production supervision moving as one throughline, the visual language tightening with every release.",
+    body:  "A brand built from Porto, campaign by campaign. Ten campaigns rolled out in three months, with identity, strategy and production supervision moving as one throughline, the visual language tightening with every release.",
     description:
       "The engagement was a long-form brand development project for index\u00ae, combining strategic direction with hands-on supervision across every phase. The work covered identity foundations, campaign architecture, and the operational rhythm required to take the brand to market.\n\n" +
-      "Ten campaigns were produced and rolled out within three months — a pace that required building the brand system and the production pipeline simultaneously. Each campaign functioned as its own brief while also feeding back into the wider identity, tightening the visual language with every release.\n\n" +
+      "Ten campaigns were produced and rolled out within three months. That pace meant building the brand system and the production pipeline at the same time. Each campaign worked as its own brief while also feeding back into the wider identity, tightening the visual language with every release.\n\n" +
       "Based in Porto across 2024, the project combined strategic oversight with production supervision, acting as both creative and operational throughline. The outcome was a brand identity that emerged not from a single launch moment but from the cumulative weight of ten coordinated campaigns.",
     videos: [
       'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/index-000018.mp4',
