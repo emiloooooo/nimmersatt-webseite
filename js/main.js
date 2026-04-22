@@ -219,33 +219,6 @@ const PROJECTS = [
 const LEGACY_ENTRIES = [];
 
 /* ══════════════════════════════════════════════
-   ARTISTS
-   The Artists tab in the dropdown menu lists the people behind the
-   collective. Clicking one opens the same player modal in "artist" mode
-   — the video stage is hidden, only the info card renders with the
-   name, bio and credits. Bios are placeholder Lorem Ipsum until each
-   person provides their own copy.
-══════════════════════════════════════════════ */
-const ARTIST_LOREM_PARAGRAPHS = [
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vehicula, ipsum non viverra ullamcorper, nulla velit dictum massa, in dignissim nisi neque non lectus. Suspendisse potenti, vivamus auctor magna a sapien fermentum, in pellentesque eros lacinia.',
-  'Curabitur fringilla nec libero a porttitor. Integer convallis, magna ut interdum porttitor, urna lectus suscipit nibh, vel facilisis sapien arcu non eros. Mauris fringilla nibh sit amet ipsum dictum, sed tempus risus consequat.',
-  'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-];
-const ARTISTS = [
-  { name: 'Otto',      role: 'Direction',  location: 'Berlin' },
-  { name: 'Sebastian', role: 'Photography', location: 'Berlin' },
-  { name: 'Leonard',   role: 'Direction',  location: 'Berlin' },
-  { name: 'Emilio',    role: 'Strategy',   location: 'Berlin' },
-  { name: 'Pelee',     role: 'Sound',      location: 'Berlin' },
-  { name: 'Adrian',    role: 'Edit',       location: 'Berlin' },
-  { name: 'Daniel',    role: 'Production', location: 'Berlin' },
-  { name: 'Joost',     role: 'Design',     location: 'Berlin' },
-].map((a) => ({
-  ...a,
-  bio: ARTIST_LOREM_PARAGRAPHS.join('\n\n'),
-}));
-
-/* ══════════════════════════════════════════════
    KONFIGURATION
 ══════════════════════════════════════════════ */
 const CONFIG = {
@@ -565,54 +538,36 @@ function drawVignette(ctx, w, h) {
   const isMenuOpen   = () => menu.classList.contains('is-open');
   const isPlayerOpen = () => playerModal.classList.contains('is-open');
 
-  // ── Populate menu dynamically based on the active tab ─────
-  // Two tabs: "projects" (LEGACY + PROJECTS, scroll-scrub aware) and
-  // "artists" (ARTISTS, info-only). renderMenu() rebuilds the list,
-  // re-runs the chime wiring on the new items, and resets the menu
-  // scroll state so the switch never leaves stale offsets.
-  // data-kind on each anchor: 'legacy' | 'project' | 'artist'.
-  let activeMenuTab = 'projects';
+  // ── Populate menu dynamically from LEGACY + PROJECTS ─────
+  // LEGACY entries (data-kind="legacy") open the player in "coming
+  // soon" mode; PROJECTS (data-kind="project") open the full player.
   function renderMenu() {
     if (!menuList) return;
     menuList.innerHTML = '';
     const frag = document.createDocumentFragment();
-    if (activeMenuTab === 'projects') {
-      LEGACY_ENTRIES.forEach((p, i) => {
-        const li = document.createElement('li');
-        const a  = document.createElement('a');
-        a.href   = '#';
-        a.className = 'menu__item menu__item--legacy';
-        a.dataset.kind = 'legacy';
-        a.dataset.idx  = String(i);
-        a.textContent  = p.title;
-        li.appendChild(a);
-        frag.appendChild(li);
-      });
-      PROJECTS.forEach((p, i) => {
-        const li = document.createElement('li');
-        const a  = document.createElement('a');
-        a.href   = '#';
-        a.className = 'menu__item';
-        a.dataset.kind = 'project';
-        a.dataset.idx  = String(i);
-        a.dataset.projectIdx = String(i);
-        a.textContent  = p.title;
-        li.appendChild(a);
-        frag.appendChild(li);
-      });
-    } else if (activeMenuTab === 'artists') {
-      ARTISTS.forEach((artist, i) => {
-        const li = document.createElement('li');
-        const a  = document.createElement('a');
-        a.href   = '#';
-        a.className = 'menu__item';
-        a.dataset.kind = 'artist';
-        a.dataset.idx  = String(i);
-        a.textContent  = artist.name;
-        li.appendChild(a);
-        frag.appendChild(li);
-      });
-    }
+    LEGACY_ENTRIES.forEach((p, i) => {
+      const li = document.createElement('li');
+      const a  = document.createElement('a');
+      a.href   = '#';
+      a.className = 'menu__item menu__item--legacy';
+      a.dataset.kind = 'legacy';
+      a.dataset.idx  = String(i);
+      a.textContent  = p.title;
+      li.appendChild(a);
+      frag.appendChild(li);
+    });
+    PROJECTS.forEach((p, i) => {
+      const li = document.createElement('li');
+      const a  = document.createElement('a');
+      a.href   = '#';
+      a.className = 'menu__item';
+      a.dataset.kind = 'project';
+      a.dataset.idx  = String(i);
+      a.dataset.projectIdx = String(i);
+      a.textContent  = p.title;
+      li.appendChild(a);
+      frag.appendChild(li);
+    });
     menuList.appendChild(frag);
     // Notify the chime module that the items have been swapped — it
     // listens for this so its per-item event listeners get rebound to
@@ -1476,13 +1431,6 @@ function drawVignette(ctx, w, h) {
       project = PROJECTS[projectIdx];
     }
     if (!project) return;
-    // Always reset the artist-mode flag when opening a project — if the
-    // user opened an artist card and then opened a project from the menu
-    // without the close path running, the old mode would still hide the
-    // stage, carousel arrows and counter (which was the "1/1 instead of
-    // 1/6 on index" bug report — the counter stayed on its HTML default
-    // because the stage was still in artist mode).
-    delete playerModal.dataset.mode;
     // Make the modal visible BEFORE populating the video. iOS Safari
     // and mobile Chrome suspend load() / play() on a <video> inside a
     // visibility:hidden container — the previous order left the clip
@@ -1499,36 +1447,8 @@ function drawVignette(ctx, w, h) {
     updateProjectNavVisibility();
   }
 
-  function openArtist(idx, source = 'menu') {
-    const artist = ARTISTS[idx];
-    if (!artist) return;
-    playerSnapshot = { currentPos, targetPos, inDeadzone, deadzoneAt, deadzoneAccum };
-    playerSource = source;
-    // Switch the modal into artist mode — CSS hides the video stage,
-    // carousel chrome and counter; the info card breathes a little
-    // taller. Mode is reset on close.
-    playerModal.dataset.mode = 'artist';
-    playerModal.classList.add('is-open');
-    playerModal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('is-player-open');
-    // Hand a project-shaped object to populatePlayer — it already
-    // renders title + description + credits; videos[] empty so the
-    // stage logic is harmless (and hidden by CSS anyway).
-    populatePlayer({
-      title:       artist.name,
-      description: artist.bio,
-      videos:      [],
-      credits: [
-        { label: 'Role',     value: artist.role },
-        { label: 'Based',    value: artist.location },
-      ],
-    });
-    updateProjectNavVisibility();
-  }
-
   function closePlayer() {
     playerModal.classList.remove('is-open');
-    delete playerModal.dataset.mode;
     playerModal.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('is-player-open');
     updateProjectNavVisibility();
@@ -1715,38 +1635,6 @@ function drawVignette(ctx, w, h) {
   window.addEventListener('touchend',    releaseMenuTouch, { capture: true });
   window.addEventListener('touchcancel', releaseMenuTouch, { capture: true });
 
-  // Header tab clicks: switch active tab, re-render list, reset scroll
-  // state, then open the dropdown so the matching list is visible
-  // immediately. Bound at document level since the .site-tab buttons
-  // live outside the menu overlay.
-  function setActiveTab(kind, { openMenu = true } = {}) {
-    if (!kind) return;
-    if (kind !== activeMenuTab) {
-      activeMenuTab = kind;
-      menu.dataset.tab = kind;
-      document.querySelectorAll('.site-tab').forEach((t) => {
-        const on = t.dataset.tab === kind;
-        t.classList.toggle('is-active', on);
-        t.setAttribute('aria-selected', on ? 'true' : 'false');
-      });
-      menuScrollTarget  = 0;
-      menuScrollCurrent = 0;
-      menuScrollVel     = 0;
-      menuOverscroll    = 0;
-      menu.style.setProperty('--menu-expand', '0');
-      if (menuList) menuList.style.transform = 'translate3d(0, 0, 0)';
-      renderMenu();
-    }
-    if (openMenu) setMenu(true);
-  }
-  document.addEventListener('click', (e) => {
-    const tab = e.target.closest('.site-tab');
-    if (!tab) return;
-    e.preventDefault();
-    e.stopPropagation();
-    setActiveTab(tab.dataset.tab);
-  });
-
   menu.addEventListener('click', (e) => {
     const item = e.target.closest('.menu__item');
     if (item) {
@@ -1761,8 +1649,6 @@ function drawVignette(ctx, w, h) {
       if (Number.isNaN(idx)) return;
       if (kind === 'legacy') {
         openPlayer(LEGACY_ENTRIES[idx], 'menu');
-      } else if (kind === 'artist') {
-        openArtist(idx, 'menu');
       } else {
         openPlayer(idx, 'menu');
       }

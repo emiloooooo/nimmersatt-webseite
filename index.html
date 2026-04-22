@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rock+3D&family=Martian+Mono:wght@300;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=50">
+  <link rel="stylesheet" href="css/style.css?v=51">
   <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -35,16 +35,7 @@
        The viewport wrapper is the fixed-height window that clips the list.
        The <ul> inside translates vertically via transform (driven by wheel
        / touch delta while the menu is open) — see main.js menuScroll*. -->
-  <nav class="menu" id="menu" aria-hidden="true" data-tab="projects">
-    <!-- Tab switcher: Projects ↔ Artists. Only visible while the
-         dropdown is open — clicking the logo reveals it and the user
-         can flip the list contents. Sits at the top of the overlay,
-         mirroring where the logo lives on the right. -->
-    <div class="menu__tabs" role="tablist" aria-label="Menu sections">
-      <button class="menu__tab is-active" type="button" role="tab" data-tab="projects" aria-selected="true">Projects</button>
-      <span class="menu__tabs-sep" aria-hidden="true">/</span>
-      <button class="menu__tab" type="button" role="tab" data-tab="artists" aria-selected="false">Artists</button>
-    </div>
+  <nav class="menu" id="menu" aria-hidden="true">
     <div class="menu__viewport" id="menu-viewport">
       <ul class="menu__list" id="menu-list"></ul>
     </div>
@@ -140,7 +131,7 @@
     </article>
   </div>
 
-  <script src="js/main.js?v=76"></script>
+  <script src="js/main.js?v=77"></script>
   <script src="js/chime.js?v=11"></script>
 </body>
 </html>

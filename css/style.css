@@ -317,55 +317,6 @@ html, body {
      as the viewport grows, items travel up with its rising top edge
      and new items reveal at the bottom. Matches the UX ask: scrolling
      down pushes texts up; scrolling back up returns them to rest. */
-/* Menu tabs — Projects / Artists. Live ONLY inside the dropdown so
-   nothing from the menu UI leaks onto the home scene. Pinned to the
-   top-left of the open menu, mirroring where the logo sits on the
-   right. Fades in with the menu (a hair before the list staggers). */
-.menu__tabs {
-  position: absolute;
-  top: clamp(1rem, 2.5vw, 2.5rem);
-  left: clamp(1rem, 2.5vw, 2.5rem);
-  display: flex;
-  align-items: baseline;
-  gap: clamp(0.6rem, 1.2vw, 1rem);
-  z-index: 2;
-  font-family: 'Martian Mono', monospace;
-  font-weight: 300;
-  font-size: clamp(0.72rem, 0.95vw, 0.88rem);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  line-height: 1;
-  opacity: 0;
-  transform: translateY(-6px);
-  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.menu.is-open .menu__tabs {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.04s;
-}
-.menu__tab {
-  appearance: none;
-  background: transparent;
-  border: 0;
-  padding: 0.25rem 0;
-  color: rgba(0, 0, 0, 0.42);
-  cursor: pointer;
-  font: inherit;
-  letter-spacing: inherit;
-  text-transform: inherit;
-  transition: color 0.28s cubic-bezier(0.23, 1, 0.32, 1);
-}
-.menu__tab:hover,
-.menu__tab:focus-visible { color: rgba(0, 0, 0, 0.78); outline: none; }
-.menu__tab.is-active { color: #000; font-weight: 600; }
-.menu__tabs-sep {
-  color: rgba(0, 0, 0, 0.22);
-  font-weight: 300;
-  user-select: none;
-}
-
 .menu__viewport {
   position: relative;
   /* 25vh collapsed → 85vh fully expanded. Upper cap trimmed from 92vh
@@ -865,30 +816,6 @@ html, body {
   margin-top: 0.2rem;
 }
 
-/* ── Artist mode (data-mode="artist" on .player-modal) ──
-   The player card recycles its layout for an Artists tab entry: the
-   16:9 video stage and its carousel chrome are hidden, only the info
-   card renders with the artist's name as title and a Lorem Ipsum bio.
-   The card breathes a touch more vertically since there is no media
-   above the text. */
-.player-modal[data-mode="artist"] .player-modal__stage,
-.player-modal[data-mode="artist"] .player-modal__nav,
-.player-modal[data-mode="artist"] .player-modal__counter,
-.player-modal[data-mode="artist"] .player-modal__loading {
-  display: none !important;
-}
-.player-modal[data-mode="artist"] .player-modal__card {
-  /* Drop the locked 16:9 budget so the card sizes to its info content.
-     Slight max-height keeps very long bios scrollable instead of
-     pushing past the viewport. */
-  max-height: min(86vh, 720px);
-}
-.player-modal[data-mode="artist"] .player-modal__info {
-  padding-top: clamp(2.4rem, 3.6vw, 3rem);
-}
-.player-modal[data-mode="artist"] .player-modal__title {
-  font-size: clamp(1.6rem, 3vw, 2.4rem);
-}
 .player-modal__description p {
   margin: 0;
 }
