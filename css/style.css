@@ -317,6 +317,53 @@ html, body {
      as the viewport grows, items travel up with its rising top edge
      and new items reveal at the bottom. Matches the UX ask: scrolling
      down pushes texts up; scrolling back up returns them to rest. */
+/* Header tabs — Projects / Artists. Persistent in the page header,
+   mirroring the logo on the right. Mono caps, hairline separator. The
+   active tab is solid black, inactive is muted. Click triggers the
+   dropdown to open with the matching list. */
+.site-header {
+  position: fixed;
+  top: clamp(1rem, 2.5vw, 2.5rem);
+  left: clamp(1rem, 2.5vw, 2.5rem);
+  display: flex;
+  align-items: baseline;
+  gap: clamp(0.6rem, 1.2vw, 1rem);
+  z-index: 1001;
+  font-family: 'Martian Mono', monospace;
+  font-weight: 300;
+  font-size: clamp(0.72rem, 0.95vw, 0.88rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1;
+  transition: opacity 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.site-tab {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0.25rem 0;
+  color: rgba(0, 0, 0, 0.42);
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  transition: color 0.28s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.site-tab:hover,
+.site-tab:focus-visible { color: rgba(0, 0, 0, 0.78); outline: none; }
+.site-tab.is-active { color: #000; font-weight: 600; }
+.site-tabs-sep {
+  color: rgba(0, 0, 0, 0.22);
+  font-weight: 300;
+  user-select: none;
+}
+/* Hide header tabs while the player modal is open so the modal owns
+   the foreground. They reappear when it closes. */
+body.is-player-open .site-header {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .menu__viewport {
   position: relative;
   /* 25vh collapsed → 85vh fully expanded. Upper cap trimmed from 92vh
@@ -559,46 +606,31 @@ html, body {
 
 .player-modal__close {
   position: absolute;
-  top: clamp(0.7rem, 1.2vw, 1.1rem);
-  right: clamp(0.7rem, 1.2vw, 1.1rem);
-  /* Bigger than the bar buttons so the torn-paper X has presence on
-     the card — bumped again at user's request so it reads as a clear,
-     tactile affordance rather than a tiny chip. */
-  width: clamp(52px, 5.2vw, 72px);
-  height: clamp(52px, 5.2vw, 72px);
-  padding: 0;
+  top: clamp(0.9rem, 1.4vw, 1.3rem);
+  right: clamp(0.9rem, 1.4vw, 1.3rem);
+  width: 40px;
+  height: 40px;
   border: 0;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 50%;
+  font-family: 'Martian Mono', monospace;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: #0a0a0a;
   cursor: pointer;
   z-index: 4;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.24s cubic-bezier(0.23, 1, 0.32, 1);
-}
-/* The X graphic itself carries the drop shadow — a soft, low-opacity
-   cast so the torn-paper texture feels like it's sitting on the card
-   rather than printed onto it. No glow, no dark halo. */
-.player-modal__close-icon {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: contain;
-  -webkit-user-drag: none;
-  user-select: none;
-  pointer-events: none;
-  /* Tighter, more defined shadow — less feathering, closer to the
-     torn-paper edges so the X reads like it's resting on the card
-     rather than floating above it. Two stacked drops: a short crisp
-     one for edge definition, a slightly longer one for weight. */
-  filter: drop-shadow(0 1.5px 1.2px rgba(0, 0, 0, 0.36)) drop-shadow(0 1px 0.5px rgba(0, 0, 0, 0.26));
-  transition: filter 0.24s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  transition: background 0.24s cubic-bezier(0.23, 1, 0.32, 1),
+              transform 0.24s cubic-bezier(0.23, 1, 0.32, 1);
 }
 .player-modal__close:hover {
+  background: #ffffff;
   transform: scale(1.08);
-}
-.player-modal__close:hover .player-modal__close-icon {
-  filter: drop-shadow(0 2px 1.5px rgba(0, 0, 0, 0.42)) drop-shadow(0 1px 0.5px rgba(0, 0, 0, 0.3));
 }
 
 .player-modal__stage {
@@ -626,185 +658,8 @@ html, body {
 }
 .player-modal__video.is-swapping { opacity: 0; }
 
-/* ── Custom video controls ──
-   Replace the native <video controls> UI with a single overlay that
-   renders identically across iOS / Android / desktop. Fades in on tap
-   and when paused, auto-hides during playback after MOUSE_IDLE_MS of
-   no pointer activity (handled in js/main.js). */
-.player-modal__controls {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 1;
-  transition: opacity 0.32s cubic-bezier(0.23, 1, 0.32, 1);
-}
-.player-modal__controls.is-hidden {
-  opacity: 0;
-}
-.player-modal__controls > * { pointer-events: auto; }
-
-/* Big center play/pause — huge tap target, only visible when paused or
-   during fade-in. */
-.player-modal__center-btn {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  width: clamp(72px, 9vw, 112px);
-  height: clamp(72px, 9vw, 112px);
-  border-radius: 50%;
-  border: 0;
-  background: rgba(0, 0, 0, 0.42);
-  backdrop-filter: blur(12px) saturate(1.15);
-  -webkit-backdrop-filter: blur(12px) saturate(1.15);
-  color: #fff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.28s cubic-bezier(0.23, 1, 0.32, 1),
-              transform 0.28s cubic-bezier(0.23, 1, 0.32, 1);
-  opacity: 0;
-  pointer-events: none;
-}
-.player-modal__center-btn:hover { background: rgba(0, 0, 0, 0.6); transform: scale(1.04); }
-.player-modal__center-btn .icon { width: 46%; height: 46%; display: block; }
-.player-modal.is-paused .player-modal__center-btn {
-  opacity: 1;
-  pointer-events: auto;
-}
-.player-modal__center-btn .icon-pause { display: none; }
-
-/* Icon switching — default show play, .is-playing shows pause. Applies to
-   BOTH the bottom bar button and the center button. */
-.player-modal.is-playing .icon-play  { display: none; }
-.player-modal.is-playing .icon-pause { display: block; }
-.player-modal:not(.is-playing) .icon-pause { display: none; }
-
-/* Volume / mute icon swap */
-.player-modal.is-muted .icon-vol  { display: none; }
-.player-modal.is-muted .icon-mute { display: block; }
-.player-modal:not(.is-muted) .icon-mute { display: none; }
-
-/* Bottom bar — pill of glass sitting above the native scrubber area.
-   Gradient wash from black at the bottom gives the text contrast
-   without a hard bar edge. */
-.player-modal__bar {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  gap: clamp(0.4rem, 0.9vw, 0.75rem);
-  padding: clamp(0.8rem, 2vw, 1.3rem) clamp(0.9rem, 1.8vw, 1.5rem) clamp(0.7rem, 1.6vw, 1.1rem);
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
-  color: #fff;
-  font-family: 'Martian Mono', monospace;
-  font-weight: 300;
-}
-.player-modal__btn {
-  flex: 0 0 auto;
-  width: clamp(32px, 3vw, 40px);
-  height: clamp(32px, 3vw, 40px);
-  border-radius: 50%;
-  border: 0;
-  background: transparent;
-  color: #fff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s cubic-bezier(0.23, 1, 0.32, 1);
-}
-.player-modal__btn:hover,
-.player-modal__btn:focus-visible {
-  background: rgba(255, 255, 255, 0.16);
-  outline: none;
-}
-.player-modal__btn .icon { width: 60%; height: 60%; display: block; }
-
-/* Fullscreen button uses the custom cut-corner graphic. Noticeably
-   larger than the other bar buttons so the opening square reads as
-   intentional rather than squeezed. No drop shadow (per design ask —
-   only the X gets one). pointer-events off on the img so the click
-   goes to the button. */
-.player-modal__btn--fullscreen {
-  width: clamp(48px, 4.4vw, 64px);
-  height: clamp(48px, 4.4vw, 64px);
-}
-.player-modal__fullscreen-icon {
-  width: 90%;
-  height: 90%;
-  display: block;
-  object-fit: contain;
-  -webkit-user-drag: none;
-  user-select: none;
-  pointer-events: none;
-}
-
-.player-modal__time {
-  flex: 0 0 auto;
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.85);
-  font-feature-settings: "tnum" 1, "lnum" 1;
-  white-space: nowrap;
-}
-
-/* Scrubber — track + buffered-range hint + played progress + draggable
-   thumb. Click anywhere on the track to seek; drag the thumb to scrub. */
-.player-modal__scrubber {
-  position: relative;
-  flex: 1 1 auto;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  touch-action: none;
-}
-.player-modal__scrubber-track,
-.player-modal__scrubber-buffer,
-.player-modal__scrubber-progress {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 3px;
-  border-radius: 999px;
-}
-.player-modal__scrubber-track {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.22);
-}
-.player-modal__scrubber-buffer {
-  width: 0%;
-  background: rgba(255, 255, 255, 0.36);
-}
-.player-modal__scrubber-progress {
-  width: 0%;
-  background: #ffffff;
-}
-.player-modal__scrubber-thumb {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #ffffff;
-  transform: translate(-50%, -50%) scale(1);
-  transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0);
-}
-.player-modal__scrubber:hover .player-modal__scrubber-thumb,
-.player-modal__scrubber.is-scrubbing .player-modal__scrubber-thumb {
-  transform: translate(-50%, -50%) scale(1.35);
-  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.12);
-}
+/* Native <video controls> UI is back — no custom overlay. The browser
+   renders its own clean, platform-consistent control chrome. */
 
 /* Loading overlay — covers the stage with the same intro GIF used in
    the preloader while a new clip fetches, so INDEX carousel switches
@@ -1007,6 +862,31 @@ html, body {
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   margin-top: 0.2rem;
 }
+
+/* ── Artist mode (data-mode="artist" on .player-modal) ──
+   The player card recycles its layout for an Artists tab entry: the
+   16:9 video stage and its carousel chrome are hidden, only the info
+   card renders with the artist's name as title and a Lorem Ipsum bio.
+   The card breathes a touch more vertically since there is no media
+   above the text. */
+.player-modal[data-mode="artist"] .player-modal__stage,
+.player-modal[data-mode="artist"] .player-modal__nav,
+.player-modal[data-mode="artist"] .player-modal__counter,
+.player-modal[data-mode="artist"] .player-modal__loading {
+  display: none !important;
+}
+.player-modal[data-mode="artist"] .player-modal__card {
+  /* Drop the locked 16:9 budget so the card sizes to its info content.
+     Slight max-height keeps very long bios scrollable instead of
+     pushing past the viewport. */
+  max-height: min(86vh, 720px);
+}
+.player-modal[data-mode="artist"] .player-modal__info {
+  padding-top: clamp(2.4rem, 3.6vw, 3rem);
+}
+.player-modal[data-mode="artist"] .player-modal__title {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+}
 .player-modal__description p {
   margin: 0;
 }
@@ -1148,24 +1028,12 @@ body.is-player-open .logo-btn {
     line-height: 1.65;
   }
 
-  /* Mobile close: matches the desktop torn-paper X treatment — no pill
-     background, just the icon with its tight drop shadow. 64 px so the
-     graphic reads as intentional on a 375-wide viewport, not like a
-     leftover chip. Font-size 0 kills any residual glyph spacing from
-     when this button used to render a text ×. */
   .player-modal__close {
-    top: 0.5rem;
-    right: 0.5rem;
-    width: 64px;
-    height: 64px;
-    font-size: 0;
-  }
-  /* Mobile fullscreen: bumped so the custom cut-corner frame is
-     legible on a phone, while the other bar buttons (play / mute /
-     time) stay their default 32–40 so the bar doesn't get crowded. */
-  .player-modal__btn--fullscreen {
-    width: 52px;
-    height: 52px;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
   }
 
   /* Compact the carousel nav for mobile so it doesn't crowd the video

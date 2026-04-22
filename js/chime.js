@@ -15,7 +15,11 @@
   const menu       = document.getElementById('menu');
   if (!menu) return;
 
-  const items = Array.from(menu.querySelectorAll('.menu__item'));
+  // Items are gathered fresh each rebind so the Artists/Projects tab
+  // swap rewires the chime to whatever entries currently live in the
+  // list. Boundary still requires there to be at least one item on
+  // initial load so we don't run setup against an empty menu.
+  let items = Array.from(menu.querySelectorAll('.menu__item'));
   if (!items.length) return;
 
   // Pentatonische Skala (Halbtöne relativ zum Original-Ton).
@@ -35,9 +39,8 @@
   // hintereinander" (aber innerhalb der restlichen 5 Stufen bleibt's zufällig).
   let lastPickedIdx = -1;
 
-  items.forEach((item, i) => {
-    item.dataset.chimeId = 'c' + i; // bleibt nur als stabile Element-ID
-  });
+  // Stable per-item IDs are now set inside bindHoverListeners() further
+  // below so the rebind path covers items added via tab swap.
 
   function pickPentatonicIdx() {
     const n = PENTATONIC.length;
@@ -196,14 +199,26 @@
   // ── Maus: pointerenter pro Eintrag ──
   // Kein "last item" Gate mehr — jedes erneute Betreten (Back-and-forth,
   // Wiggle über denselben Eintrag) soll einen neuen Ton auslösen.
-  items.forEach((item) => {
-    item.addEventListener('pointerenter', (e) => {
-      // Touch-Pointer werden separat über touchmove abgehandelt, sonst
-      // würde der Initial-Tap doppelt zum Chime führen.
-      if (e.pointerType === 'touch') return;
-      playChime(item);
+  function bindHoverListeners() {
+    items.forEach((item, i) => {
+      if (item._chimeBound) return;
+      item._chimeBound = true;
+      item.dataset.chimeId = 'c' + i;
+      item.addEventListener('pointerenter', (e) => {
+        if (e.pointerType === 'touch') return;
+        playChime(item);
+      });
     });
-  });
+  }
+  bindHoverListeners();
+
+  // Expose a rebind hook so main.js can call it after re-rendering the
+  // menu (Projects ↔ Artists tab switch). New items get listeners; old
+  // detached items fall out of `items` and are GC'd.
+  window.__chimeRebind = function rebind() {
+    items = Array.from(menu.querySelectorAll('.menu__item'));
+    bindHoverListeners();
+  };
 
   // ── Touch: Finger folgen, Eintragswechsel erkennen ──
   let lastTouchItem = null;

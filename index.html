@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rock+3D&family=Martian+Mono:wght@300;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=48">
+  <link rel="stylesheet" href="css/style.css?v=50">
   <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -26,6 +26,15 @@
     <img class="preloader__media" src="assets/loader.gif?v=4" alt="Nimmersatt">
   </div>
 
+  <!-- Header: Tabs left, Logo right. Tabs are always visible — clicking
+       one opens the dropdown with the matching list (Projects / Artists)
+       and switches the active tab indicator. -->
+  <div class="site-header" role="tablist" aria-label="Menu sections">
+    <button class="site-tab is-active" type="button" role="tab" data-tab="projects" aria-selected="true">Projects</button>
+    <span class="site-tabs-sep" aria-hidden="true">/</span>
+    <button class="site-tab" type="button" role="tab" data-tab="artists" aria-selected="false">Artists</button>
+  </div>
+
   <!-- Logo: oben rechts (toggle Menu) -->
   <button class="logo-btn" id="logo-btn" aria-label="Menü öffnen" aria-expanded="false">
     <img class="logo" src="assets/logo.svg" alt="Nimmersatt">
@@ -35,7 +44,7 @@
        The viewport wrapper is the fixed-height window that clips the list.
        The <ul> inside translates vertically via transform (driven by wheel
        / touch delta while the menu is open) — see main.js menuScroll*. -->
-  <nav class="menu" id="menu" aria-hidden="true">
+  <nav class="menu" id="menu" aria-hidden="true" data-tab="projects">
     <div class="menu__viewport" id="menu-viewport">
       <ul class="menu__list" id="menu-list"></ul>
     </div>
@@ -92,52 +101,19 @@
   <div id="player-modal" class="player-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="player-title">
     <div class="player-modal__backdrop" data-close></div>
     <article class="player-modal__card">
-      <button class="player-modal__close" type="button" aria-label="Schließen" data-close>
-        <img class="player-modal__close-icon" src="assets/icon-close.png?v=1" alt="" aria-hidden="true" draggable="false">
-      </button>
+      <button class="player-modal__close" type="button" aria-label="Schließen" data-close>×</button>
       <div class="player-modal__stage">
-        <!-- Video shown when a project.video path is present; otherwise
-             hidden and the fallback below takes its place. Native
-             controls are disabled — we render our own overlay below so
-             the UI is consistent across iOS / Android / desktop and
-             doesn't collide with our close / carousel controls. -->
-        <video class="player-modal__video" playsinline preload="metadata" webkit-playsinline></video>
-        <!-- Custom control overlay — big center play/pause on tap,
-             scrubber + time + mute + fullscreen along the bottom.
-             Auto-hides during playback; revealed on tap or when paused. -->
-        <div class="player-modal__controls" data-controls>
-          <button class="player-modal__center-btn" type="button" aria-label="Abspielen" data-ctrl="toggle-play">
-            <svg class="icon icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5-13-7.5z" fill="currentColor"/></svg>
-            <svg class="icon icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor"/></svg>
-          </button>
-          <div class="player-modal__bar">
-            <button class="player-modal__btn" type="button" aria-label="Abspielen" data-ctrl="toggle-play">
-              <svg class="icon icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5-13-7.5z" fill="currentColor"/></svg>
-              <svg class="icon icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor"/></svg>
-            </button>
-            <span class="player-modal__time" data-time>0:00 / 0:00</span>
-            <div class="player-modal__scrubber" data-ctrl="scrub" role="slider" tabindex="0" aria-label="Videoposition" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-              <div class="player-modal__scrubber-track"></div>
-              <div class="player-modal__scrubber-buffer" data-buffer></div>
-              <div class="player-modal__scrubber-progress" data-progress></div>
-              <div class="player-modal__scrubber-thumb" data-thumb></div>
-            </div>
-            <button class="player-modal__btn" type="button" aria-label="Ton stumm" data-ctrl="toggle-mute">
-              <svg class="icon icon-vol" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z" fill="currentColor"/></svg>
-              <svg class="icon icon-mute" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm11.5 3-3-3v6l3-3zm3.2-5.2L17.3 8.2 19.6 10.5l-2.3 2.3 1.4 1.4 2.3-2.3 2.3 2.3 1.4-1.4L22.4 10.5l2.3-2.3-1.4-1.4-2.3 2.3z" fill="currentColor"/></svg>
-            </button>
-            <button class="player-modal__btn player-modal__btn--fullscreen" type="button" aria-label="Vollbild" data-ctrl="fullscreen">
-              <img class="player-modal__fullscreen-icon" src="assets/icon-fullscreen.png?v=1" alt="" aria-hidden="true" draggable="false">
-            </button>
-          </div>
-        </div>
+        <!-- Native <video controls> — clean default per-platform chrome.
+             Close, carousel arrows, counter sit outside the scrubber
+             row so nothing collides with the platform's own controls. -->
+        <video class="player-modal__video" controls playsinline preload="metadata" webkit-playsinline></video>
         <!-- Loading overlay — shows the loader GIF while a clip is
              fetching, so switching between INDEX carousel videos
              doesn't leave a dark rectangle. Toggled via .is-active. -->
         <div class="player-modal__loading" aria-hidden="true">
           <img src="assets/loader.gif?v=4" alt="">
         </div>
-<div class="player-modal__stage-fallback">
+        <div class="player-modal__stage-fallback">
           <span class="player-modal__stage-label">Coming soon</span>
           <h2 class="player-modal__stage-title"></h2>
         </div>
@@ -164,7 +140,7 @@
     </article>
   </div>
 
-  <script src="js/main.js?v=72"></script>
-  <script src="js/chime.js?v=10"></script>
+  <script src="js/main.js?v=74"></script>
+  <script src="js/chime.js?v=11"></script>
 </body>
 </html>

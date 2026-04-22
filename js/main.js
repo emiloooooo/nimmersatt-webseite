@@ -204,6 +204,33 @@ const PROJECTS = [
 const LEGACY_ENTRIES = [];
 
 /* ══════════════════════════════════════════════
+   ARTISTS
+   The Artists tab in the dropdown menu lists the people behind the
+   collective. Clicking one opens the same player modal in "artist" mode
+   — the video stage is hidden, only the info card renders with the
+   name, bio and credits. Bios are placeholder Lorem Ipsum until each
+   person provides their own copy.
+══════════════════════════════════════════════ */
+const ARTIST_LOREM_PARAGRAPHS = [
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vehicula, ipsum non viverra ullamcorper, nulla velit dictum massa, in dignissim nisi neque non lectus. Suspendisse potenti, vivamus auctor magna a sapien fermentum, in pellentesque eros lacinia.',
+  'Curabitur fringilla nec libero a porttitor. Integer convallis, magna ut interdum porttitor, urna lectus suscipit nibh, vel facilisis sapien arcu non eros. Mauris fringilla nibh sit amet ipsum dictum, sed tempus risus consequat.',
+  'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+];
+const ARTISTS = [
+  { name: 'Otto',      role: 'Direction',  location: 'Berlin' },
+  { name: 'Sebastian', role: 'Photography', location: 'Berlin' },
+  { name: 'Leonard',   role: 'Direction',  location: 'Berlin' },
+  { name: 'Emilio',    role: 'Strategy',   location: 'Berlin' },
+  { name: 'Pelee',     role: 'Sound',      location: 'Berlin' },
+  { name: 'Adrian',    role: 'Edit',       location: 'Berlin' },
+  { name: 'Daniel',    role: 'Production', location: 'Berlin' },
+  { name: 'Joost',     role: 'Design',     location: 'Berlin' },
+].map((a) => ({
+  ...a,
+  bio: ARTIST_LOREM_PARAGRAPHS.join('\n\n'),
+}));
+
+/* ══════════════════════════════════════════════
    KONFIGURATION
 ══════════════════════════════════════════════ */
 const CONFIG = {
@@ -523,39 +550,63 @@ function drawVignette(ctx, w, h) {
   const isMenuOpen   = () => menu.classList.contains('is-open');
   const isPlayerOpen = () => playerModal.classList.contains('is-open');
 
-  // ── Populate menu dynamically: LEGACY entries first, then PROJECTS ─────
-  // Must happen BEFORE chime.js runs its querySelectorAll('.menu__item').
-  // main.js loads synchronously before chime.js in index.html, so this IIFE
-  // completes first and the entries exist when chime.js boots.
-  // data-kind distinguishes legacy (no frames) from project (scroll-scrub).
-  if (menuList) {
+  // ── Populate menu dynamically based on the active tab ─────
+  // Two tabs: "projects" (LEGACY + PROJECTS, scroll-scrub aware) and
+  // "artists" (ARTISTS, info-only). renderMenu() rebuilds the list,
+  // re-runs the chime wiring on the new items, and resets the menu
+  // scroll state so the switch never leaves stale offsets.
+  // data-kind on each anchor: 'legacy' | 'project' | 'artist'.
+  let activeMenuTab = 'projects';
+  function renderMenu() {
+    if (!menuList) return;
+    menuList.innerHTML = '';
     const frag = document.createDocumentFragment();
-    LEGACY_ENTRIES.forEach((p, i) => {
-      const li = document.createElement('li');
-      const a  = document.createElement('a');
-      a.href   = '#';
-      a.className = 'menu__item menu__item--legacy';
-      a.dataset.kind = 'legacy';
-      a.dataset.idx  = String(i);
-      a.textContent  = p.title;
-      li.appendChild(a);
-      frag.appendChild(li);
-    });
-    PROJECTS.forEach((p, i) => {
-      const li = document.createElement('li');
-      const a  = document.createElement('a');
-      a.href   = '#';
-      a.className = 'menu__item';
-      a.dataset.kind = 'project';
-      a.dataset.idx  = String(i);
-      // Legacy data-projectIdx kept for any downstream code still referencing it.
-      a.dataset.projectIdx = String(i);
-      a.textContent  = p.title;
-      li.appendChild(a);
-      frag.appendChild(li);
-    });
+    if (activeMenuTab === 'projects') {
+      LEGACY_ENTRIES.forEach((p, i) => {
+        const li = document.createElement('li');
+        const a  = document.createElement('a');
+        a.href   = '#';
+        a.className = 'menu__item menu__item--legacy';
+        a.dataset.kind = 'legacy';
+        a.dataset.idx  = String(i);
+        a.textContent  = p.title;
+        li.appendChild(a);
+        frag.appendChild(li);
+      });
+      PROJECTS.forEach((p, i) => {
+        const li = document.createElement('li');
+        const a  = document.createElement('a');
+        a.href   = '#';
+        a.className = 'menu__item';
+        a.dataset.kind = 'project';
+        a.dataset.idx  = String(i);
+        a.dataset.projectIdx = String(i);
+        a.textContent  = p.title;
+        li.appendChild(a);
+        frag.appendChild(li);
+      });
+    } else if (activeMenuTab === 'artists') {
+      ARTISTS.forEach((artist, i) => {
+        const li = document.createElement('li');
+        const a  = document.createElement('a');
+        a.href   = '#';
+        a.className = 'menu__item';
+        a.dataset.kind = 'artist';
+        a.dataset.idx  = String(i);
+        a.textContent  = artist.name;
+        li.appendChild(a);
+        frag.appendChild(li);
+      });
+    }
     menuList.appendChild(frag);
+    // Notify the chime module that the items have been swapped — it
+    // listens for this so its per-item event listeners get rebound to
+    // the new anchors. (chime.js exposes window.__chimeRebind for this.)
+    if (typeof window.__chimeRebind === 'function') {
+      try { window.__chimeRebind(); } catch (e) { /* ignore */ }
+    }
   }
+  renderMenu();
 
   const loader = new FrameLoader(CONFIG, PROJECTS);
 
@@ -1243,229 +1294,11 @@ function drawVignette(ctx, w, h) {
   const playerNavNext = playerModal.querySelector('.player-modal__nav--next');
   const playerCounter = playerModal.querySelector('.player-modal__counter');
   const playerCountI  = playerModal.querySelector('.player-modal__counter-index');
-  const playerCountT  = playerModal.querySelector('.player-modal__counter-total');
-  const playerCtrls   = playerModal.querySelector('[data-controls]');
-  const playerScrub   = playerModal.querySelector('[data-ctrl="scrub"]');
-  const playerProg    = playerModal.querySelector('[data-progress]');
-  const playerBuf     = playerModal.querySelector('[data-buffer]');
-  const playerThumb   = playerModal.querySelector('[data-thumb]');
-  const playerTimeEl  = playerModal.querySelector('[data-time]');
   let playerSnapshot = null;
 
-  // ── Custom player controls ────────────────────────────────────────
-  // We render our own play/pause, scrubber, mute and fullscreen over
-  // the video so the UI reads identically on iOS, Android and desktop
-  // and never fights with platform-native controls. `controls` is off
-  // on the <video>; every state is driven from events on playerVideo.
-
-  function fmtTime(t) {
-    if (!isFinite(t) || t < 0) t = 0;
-    const m = Math.floor(t / 60);
-    const s = Math.floor(t % 60);
-    return m + ':' + (s < 10 ? '0' : '') + s;
-  }
-  function syncTimeUI() {
-    if (!playerVideo || !playerProg || !playerThumb || !playerTimeEl) return;
-    const dur = playerVideo.duration;
-    const cur = playerVideo.currentTime;
-    const pct = dur > 0 ? (cur / dur) * 100 : 0;
-    playerProg.style.width = pct.toFixed(2) + '%';
-    playerThumb.style.left = pct.toFixed(2) + '%';
-    playerTimeEl.textContent = fmtTime(cur) + ' / ' + fmtTime(dur);
-    if (playerScrub) playerScrub.setAttribute('aria-valuenow', Math.round(pct));
-  }
-  function syncBufferUI() {
-    if (!playerVideo || !playerBuf) return;
-    const dur = playerVideo.duration;
-    const b   = playerVideo.buffered;
-    if (!dur || !b || !b.length) { playerBuf.style.width = '0%'; return; }
-    // Use the buffered range that includes currentTime if available;
-    // falls back to the last buffered range.
-    let end = 0;
-    for (let i = 0; i < b.length; i++) {
-      if (b.start(i) <= playerVideo.currentTime && b.end(i) >= playerVideo.currentTime) {
-        end = b.end(i); break;
-      }
-      if (b.end(i) > end) end = b.end(i);
-    }
-    playerBuf.style.width = ((end / dur) * 100).toFixed(2) + '%';
-  }
-  function setPlayingClass() {
-    playerModal.classList.toggle('is-playing', !playerVideo.paused && !playerVideo.ended);
-    playerModal.classList.toggle('is-paused',  playerVideo.paused || playerVideo.ended);
-  }
-  function setMutedClass() {
-    playerModal.classList.toggle('is-muted', playerVideo.muted || playerVideo.volume === 0);
-  }
-
-  // Auto-hide the control overlay after 2.2 s of no pointer activity
-  // while the video is playing. Any pointer/touch inside the stage
-  // resets the timer. When paused, controls stay visible.
-  let hideTimer = null;
-  const HIDE_MS = 2200;
-  function showControls() {
-    if (!playerCtrls) return;
-    playerCtrls.classList.remove('is-hidden');
-    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
-    if (!playerVideo.paused && !playerVideo.ended) {
-      hideTimer = setTimeout(() => playerCtrls.classList.add('is-hidden'), HIDE_MS);
-    }
-  }
-  function forceShowControls() {
-    if (!playerCtrls) return;
-    playerCtrls.classList.remove('is-hidden');
-    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
-  }
-
-  // Native events on the video drive all UI state.
-  if (playerVideo) {
-    playerVideo.addEventListener('play',           () => { setPlayingClass(); showControls(); });
-    playerVideo.addEventListener('playing',        () => { setPlayingClass(); showControls(); });
-    playerVideo.addEventListener('pause',          () => { setPlayingClass(); forceShowControls(); });
-    playerVideo.addEventListener('ended',          () => { setPlayingClass(); forceShowControls(); });
-    playerVideo.addEventListener('volumechange',   setMutedClass);
-    playerVideo.addEventListener('timeupdate',     syncTimeUI);
-    playerVideo.addEventListener('progress',       syncBufferUI);
-    playerVideo.addEventListener('loadedmetadata', () => { syncTimeUI(); syncBufferUI(); setMutedClass(); });
-    playerVideo.addEventListener('loadeddata',     () => { syncTimeUI(); syncBufferUI(); });
-    // Tap on the video itself toggles play/pause.
-    playerVideo.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      togglePlay();
-    });
-  }
-
-  function togglePlay() {
-    if (!playerVideo) return;
-    if (playerVideo.paused || playerVideo.ended) {
-      const p = playerVideo.play();
-      if (p && typeof p.catch === 'function') {
-        p.catch(() => {
-          playerVideo.muted = true;
-          setMutedClass();
-          const p2 = playerVideo.play();
-          if (p2 && typeof p2.catch === 'function') p2.catch(() => {});
-        });
-      }
-    } else {
-      playerVideo.pause();
-    }
-  }
-
-  function toggleMute() {
-    if (!playerVideo) return;
-    playerVideo.muted = !playerVideo.muted;
-    setMutedClass();
-  }
-
-  function toggleStageFullscreen() {
-    if (!playerVideo) return;
-    // Are we currently in fullscreen? Check every vendor-prefixed
-    // variant — iOS Safari uses webkitDisplayingFullscreen on the
-    // <video>, other browsers set a document-level fullscreen element.
-    const docFsEl = document.fullscreenElement
-                 || document.webkitFullscreenElement
-                 || document.mozFullScreenElement
-                 || document.msFullscreenElement;
-    const iosVideoFs = !!playerVideo.webkitDisplayingFullscreen;
-    if (docFsEl || iosVideoFs) {
-      // Exit
-      if (iosVideoFs && typeof playerVideo.webkitExitFullscreen === 'function') {
-        try { playerVideo.webkitExitFullscreen(); return; } catch (e) { /* ignore */ }
-      }
-      const exit = document.exitFullscreen
-                || document.webkitExitFullscreen
-                || document.mozCancelFullScreen
-                || document.msExitFullscreen;
-      if (exit) {
-        try {
-          const p = exit.call(document);
-          if (p && typeof p.catch === 'function') p.catch(() => {});
-        } catch (e) { /* ignore */ }
-      }
-      return;
-    }
-    // Enter — iOS with playsinline only enters fullscreen through the
-    // webkit video-element method; other browsers use standard
-    // requestFullscreen on the stage so the card chrome also fills
-    // the screen.
-    if (typeof playerVideo.webkitEnterFullscreen === 'function') {
-      try { playerVideo.webkitEnterFullscreen(); return; } catch (e) { /* ignore */ }
-    }
-    const stage = playerVideo.parentElement;
-    const el    = stage || playerVideo;
-    const req   = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
-    if (req) {
-      const p = req.call(el);
-      if (p && typeof p.catch === 'function') p.catch(() => {});
-    }
-  }
-
-  if (playerCtrls) {
-    playerCtrls.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-ctrl]');
-      if (!btn) return;
-      e.stopPropagation();
-      const kind = btn.dataset.ctrl;
-      if (kind === 'toggle-play')  togglePlay();
-      else if (kind === 'toggle-mute') toggleMute();
-      else if (kind === 'fullscreen')  toggleStageFullscreen();
-    });
-  }
-
-  // Scrubber — click anywhere to seek, drag the thumb for scrub.
-  if (playerScrub) {
-    let scrubbing = false;
-    const seekToClientX = (clientX) => {
-      const r = playerScrub.getBoundingClientRect();
-      const pct = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
-      if (isFinite(playerVideo.duration)) {
-        playerVideo.currentTime = pct * playerVideo.duration;
-        syncTimeUI();
-      }
-    };
-    const startScrub = (e) => {
-      scrubbing = true;
-      playerScrub.classList.add('is-scrubbing');
-      forceShowControls();
-      const x = e.touches ? e.touches[0].clientX : e.clientX;
-      seekToClientX(x);
-      e.preventDefault();
-    };
-    const moveScrub = (e) => {
-      if (!scrubbing) return;
-      const x = e.touches ? e.touches[0].clientX : e.clientX;
-      seekToClientX(x);
-      e.preventDefault();
-    };
-    const endScrub = () => {
-      if (!scrubbing) return;
-      scrubbing = false;
-      playerScrub.classList.remove('is-scrubbing');
-      showControls();
-    };
-    playerScrub.addEventListener('pointerdown', (e) => { try { playerScrub.setPointerCapture(e.pointerId); } catch (err) {} startScrub(e); });
-    playerScrub.addEventListener('pointermove', moveScrub);
-    playerScrub.addEventListener('pointerup',   endScrub);
-    playerScrub.addEventListener('pointercancel', endScrub);
-    // Keyboard support for accessibility
-    playerScrub.addEventListener('keydown', (e) => {
-      if (!isFinite(playerVideo.duration)) return;
-      const step = playerVideo.duration * 0.02;
-      if (e.key === 'ArrowRight') { playerVideo.currentTime = Math.min(playerVideo.duration, playerVideo.currentTime + step); e.preventDefault(); }
-      else if (e.key === 'ArrowLeft')  { playerVideo.currentTime = Math.max(0, playerVideo.currentTime - step); e.preventDefault(); }
-    });
-  }
-
-  // Pointer activity over the stage keeps the controls visible.
-  const playerStage = playerModal.querySelector('.player-modal__stage');
-  if (playerStage) {
-    const nudge = () => showControls();
-    playerStage.addEventListener('pointermove',  nudge);
-    playerStage.addEventListener('touchstart',   nudge, { passive: true });
-    playerStage.addEventListener('pointerenter', nudge);
-  }
+  // Native <video controls> provides play/pause, scrubber, mute, time,
+  // and fullscreen with the platform's own chrome — no custom overlay
+  // to keep in sync.
 
   // Carousel state — scoped to the currently-open project. 0 entries = no
   // video, 1 entry = no nav UI, 2+ entries = arrows + counter.
@@ -1527,11 +1360,6 @@ function drawVignette(ctx, w, h) {
       }
     };
     try { playerVideo.pause(); } catch (e) { /* ignore */ }
-    // Reset classes so the big center play button shows immediately
-    // while the incoming clip is still loading; play/pause events will
-    // flip this once decoding begins.
-    playerModal.classList.remove('is-playing');
-    playerModal.classList.add('is-paused');
     if (fade) {
       // Carousel swap: the old clip fades out via .is-swapping while the
       // new one loads underneath. Src swap + play() still run
@@ -1649,15 +1477,40 @@ function drawVignette(ctx, w, h) {
     updateProjectNavVisibility();
   }
 
+  function openArtist(idx, source = 'menu') {
+    const artist = ARTISTS[idx];
+    if (!artist) return;
+    playerSnapshot = { currentPos, targetPos, inDeadzone, deadzoneAt, deadzoneAccum };
+    playerSource = source;
+    // Switch the modal into artist mode — CSS hides the video stage,
+    // carousel chrome and counter; the info card breathes a little
+    // taller. Mode is reset on close.
+    playerModal.dataset.mode = 'artist';
+    playerModal.classList.add('is-open');
+    playerModal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('is-player-open');
+    // Hand a project-shaped object to populatePlayer — it already
+    // renders title + description + credits; videos[] empty so the
+    // stage logic is harmless (and hidden by CSS anyway).
+    populatePlayer({
+      title:       artist.name,
+      description: artist.bio,
+      videos:      [],
+      credits: [
+        { label: 'Role',     value: artist.role },
+        { label: 'Based',    value: artist.location },
+      ],
+    });
+    updateProjectNavVisibility();
+  }
+
   function closePlayer() {
     playerModal.classList.remove('is-open');
-    playerModal.classList.remove('is-playing');
-    playerModal.classList.remove('is-paused');
+    delete playerModal.dataset.mode;
     playerModal.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('is-player-open');
     updateProjectNavVisibility();
     hideLoading();
-    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
     // Stop any playing video so audio doesn't continue behind the
     // scroll-scene after the modal closes.
     if (playerVideo) {
@@ -1840,6 +1693,38 @@ function drawVignette(ctx, w, h) {
   window.addEventListener('touchend',    releaseMenuTouch, { capture: true });
   window.addEventListener('touchcancel', releaseMenuTouch, { capture: true });
 
+  // Header tab clicks: switch active tab, re-render list, reset scroll
+  // state, then open the dropdown so the matching list is visible
+  // immediately. Bound at document level since the .site-tab buttons
+  // live outside the menu overlay.
+  function setActiveTab(kind, { openMenu = true } = {}) {
+    if (!kind) return;
+    if (kind !== activeMenuTab) {
+      activeMenuTab = kind;
+      menu.dataset.tab = kind;
+      document.querySelectorAll('.site-tab').forEach((t) => {
+        const on = t.dataset.tab === kind;
+        t.classList.toggle('is-active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      menuScrollTarget  = 0;
+      menuScrollCurrent = 0;
+      menuScrollVel     = 0;
+      menuOverscroll    = 0;
+      menu.style.setProperty('--menu-expand', '0');
+      if (menuList) menuList.style.transform = 'translate3d(0, 0, 0)';
+      renderMenu();
+    }
+    if (openMenu) setMenu(true);
+  }
+  document.addEventListener('click', (e) => {
+    const tab = e.target.closest('.site-tab');
+    if (!tab) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setActiveTab(tab.dataset.tab);
+  });
+
   menu.addEventListener('click', (e) => {
     const item = e.target.closest('.menu__item');
     if (item) {
@@ -1854,6 +1739,8 @@ function drawVignette(ctx, w, h) {
       if (Number.isNaN(idx)) return;
       if (kind === 'legacy') {
         openPlayer(LEGACY_ENTRIES[idx], 'menu');
+      } else if (kind === 'artist') {
+        openArtist(idx, 'menu');
       } else {
         openPlayer(idx, 'menu');
       }
