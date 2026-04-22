@@ -1461,6 +1461,13 @@ function drawVignette(ctx, w, h) {
       project = PROJECTS[projectIdx];
     }
     if (!project) return;
+    // Always reset the artist-mode flag when opening a project — if the
+    // user opened an artist card and then opened a project from the menu
+    // without the close path running, the old mode would still hide the
+    // stage, carousel arrows and counter (which was the "1/1 instead of
+    // 1/6 on index" bug report — the counter stayed on its HTML default
+    // because the stage was still in artist mode).
+    delete playerModal.dataset.mode;
     // Make the modal visible BEFORE populating the video. iOS Safari
     // and mobile Chrome suspend load() / play() on a <video> inside a
     // visibility:hidden container — the previous order left the clip

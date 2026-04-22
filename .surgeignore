@@ -1,3 +1,7 @@
+# web-assets are served from GitHub Pages, never from Surge — exclude
+# the whole folder so the deploy size stays small.
+web-assets/
+
 # Locally stored raw renders — not part of the published site
 assets/Render_*
 assets/Rendering_*

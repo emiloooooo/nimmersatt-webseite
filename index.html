@@ -26,15 +26,6 @@
     <img class="preloader__media" src="assets/loader.gif?v=4" alt="Nimmersatt">
   </div>
 
-  <!-- Header: Tabs left, Logo right. Tabs are always visible — clicking
-       one opens the dropdown with the matching list (Projects / Artists)
-       and switches the active tab indicator. -->
-  <div class="site-header" role="tablist" aria-label="Menu sections">
-    <button class="site-tab is-active" type="button" role="tab" data-tab="projects" aria-selected="true">Projects</button>
-    <span class="site-tabs-sep" aria-hidden="true">/</span>
-    <button class="site-tab" type="button" role="tab" data-tab="artists" aria-selected="false">Artists</button>
-  </div>
-
   <!-- Logo: oben rechts (toggle Menu) -->
   <button class="logo-btn" id="logo-btn" aria-label="Menü öffnen" aria-expanded="false">
     <img class="logo" src="assets/logo.svg" alt="Nimmersatt">
@@ -45,6 +36,15 @@
        The <ul> inside translates vertically via transform (driven by wheel
        / touch delta while the menu is open) — see main.js menuScroll*. -->
   <nav class="menu" id="menu" aria-hidden="true" data-tab="projects">
+    <!-- Tab switcher: Projects ↔ Artists. Only visible while the
+         dropdown is open — clicking the logo reveals it and the user
+         can flip the list contents. Sits at the top of the overlay,
+         mirroring where the logo lives on the right. -->
+    <div class="menu__tabs" role="tablist" aria-label="Menu sections">
+      <button class="menu__tab is-active" type="button" role="tab" data-tab="projects" aria-selected="true">Projects</button>
+      <span class="menu__tabs-sep" aria-hidden="true">/</span>
+      <button class="menu__tab" type="button" role="tab" data-tab="artists" aria-selected="false">Artists</button>
+    </div>
     <div class="menu__viewport" id="menu-viewport">
       <ul class="menu__list" id="menu-list"></ul>
     </div>
@@ -140,7 +140,7 @@
     </article>
   </div>
 
-  <script src="js/main.js?v=74"></script>
+  <script src="js/main.js?v=75"></script>
   <script src="js/chime.js?v=11"></script>
 </body>
 </html>

@@ -317,27 +317,35 @@ html, body {
      as the viewport grows, items travel up with its rising top edge
      and new items reveal at the bottom. Matches the UX ask: scrolling
      down pushes texts up; scrolling back up returns them to rest. */
-/* Header tabs — Projects / Artists. Persistent in the page header,
-   mirroring the logo on the right. Mono caps, hairline separator. The
-   active tab is solid black, inactive is muted. Click triggers the
-   dropdown to open with the matching list. */
-.site-header {
-  position: fixed;
+/* Menu tabs — Projects / Artists. Live ONLY inside the dropdown so
+   nothing from the menu UI leaks onto the home scene. Pinned to the
+   top-left of the open menu, mirroring where the logo sits on the
+   right. Fades in with the menu (a hair before the list staggers). */
+.menu__tabs {
+  position: absolute;
   top: clamp(1rem, 2.5vw, 2.5rem);
   left: clamp(1rem, 2.5vw, 2.5rem);
   display: flex;
   align-items: baseline;
   gap: clamp(0.6rem, 1.2vw, 1rem);
-  z-index: 1001;
+  z-index: 2;
   font-family: 'Martian Mono', monospace;
   font-weight: 300;
   font-size: clamp(0.72rem, 0.95vw, 0.88rem);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   line-height: 1;
-  transition: opacity 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.site-tab {
+.menu.is-open .menu__tabs {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.04s;
+}
+.menu__tab {
   appearance: none;
   background: transparent;
   border: 0;
@@ -349,19 +357,13 @@ html, body {
   text-transform: inherit;
   transition: color 0.28s cubic-bezier(0.23, 1, 0.32, 1);
 }
-.site-tab:hover,
-.site-tab:focus-visible { color: rgba(0, 0, 0, 0.78); outline: none; }
-.site-tab.is-active { color: #000; font-weight: 600; }
-.site-tabs-sep {
+.menu__tab:hover,
+.menu__tab:focus-visible { color: rgba(0, 0, 0, 0.78); outline: none; }
+.menu__tab.is-active { color: #000; font-weight: 600; }
+.menu__tabs-sep {
   color: rgba(0, 0, 0, 0.22);
   font-weight: 300;
   user-select: none;
-}
-/* Hide header tabs while the player modal is open so the modal owns
-   the foreground. They reappear when it closes. */
-body.is-player-open .site-header {
-  opacity: 0;
-  pointer-events: none;
 }
 
 .menu__viewport {
