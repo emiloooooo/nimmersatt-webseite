@@ -51,7 +51,7 @@ const PROJECTS = [
       "The project was produced as a collaboration between 032c and CUPRA, anchored in the urban fashion sensibility that defines the 032c world. The brief was to carry CUPRA into that aesthetic context without diluting either side — fashion codes holding the surface, automotive identity sitting underneath.\n\n" +
       "Timed to coincide with Paris Fashion Week, the production operated inside the compressed schedule of the event calendar. Shooting and direction had to navigate the logistical reality of Paris during fashion week while still delivering a piece that felt deliberate rather than reactive.\n\n" +
       "Completed in 2024, the final work sat at the intersection of fashion media and brand collaboration, translating CUPRA into a language that read naturally alongside 032c's editorial world.",
-    video: null,
+    video: 'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/cupra-everything-counts.mp4',
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
       { label: 'Location',  value: 'Paris' },
