@@ -687,34 +687,6 @@ html, body {
 }
 .player-modal__nav[hidden] { display: none; }
 
-/* Counter — mono, small, editorial. Top-left of the stage: iOS native
-   controls live at the bottom (scrubber, play, time, fullscreen) and
-   the card's close button is top-right, so top-left is the one corner
-   that never fights with either set of controls. */
-.player-modal__counter {
-  position: absolute;
-  top: clamp(0.9rem, 1.4vw, 1.3rem);
-  left: clamp(0.9rem, 1.4vw, 1.3rem);
-  z-index: 3;
-  padding: 0.32rem 0.6rem;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 999px;
-  font-family: 'Martian Mono', monospace;
-  font-weight: 300;
-  font-size: 0.66rem;
-  letter-spacing: 0.2em;
-  color: rgba(0, 0, 0, 0.74);
-  font-feature-settings: "tnum" 1, "lnum" 1;
-  display: flex;
-  align-items: center;
-  gap: 0.28em;
-  pointer-events: none;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
-}
-.player-modal__counter[hidden] { display: none; }
-.player-modal__counter-sep { opacity: 0.42; }
 .player-modal__stage-fallback {
   padding: clamp(3rem, 8vw, 5rem) clamp(1.5rem, 3vw, 2.5rem);
   display: flex;
@@ -973,12 +945,6 @@ body.is-player-open .logo-btn {
   }
   .player-modal__nav--prev { left: 0.55rem; }
   .player-modal__nav--next { right: 0.55rem; }
-  .player-modal__counter {
-    top: 0.65rem;
-    left: 0.65rem;
-    font-size: 0.6rem;
-    padding: 0.28rem 0.5rem;
-  }
 
 }
 

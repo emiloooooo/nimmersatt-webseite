@@ -1274,8 +1274,6 @@ function drawVignette(ctx, w, h) {
   const playerLoading = playerModal.querySelector('.player-modal__loading');
   const playerNavPrev = playerModal.querySelector('.player-modal__nav--prev');
   const playerNavNext = playerModal.querySelector('.player-modal__nav--next');
-  const playerCounter = playerModal.querySelector('.player-modal__counter');
-  const playerCountI  = playerModal.querySelector('.player-modal__counter-index');
   let playerSnapshot = null;
 
   // Native <video controls> provides play/pause, scrubber, mute, time,
@@ -1357,11 +1355,6 @@ function drawVignette(ctx, w, h) {
     const multi = videoList.length > 1;
     if (playerNavPrev) playerNavPrev.hidden = !multi;
     if (playerNavNext) playerNavNext.hidden = !multi;
-    if (playerCounter) playerCounter.hidden = !multi;
-    if (multi) {
-      if (playerCountI) playerCountI.textContent = String(videoIdx + 1);
-      if (playerCountT) playerCountT.textContent = String(videoList.length);
-    }
   }
 
   function stepVideo(delta) {
