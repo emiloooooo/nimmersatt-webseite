@@ -96,7 +96,12 @@ const PROJECTS = [
       "The SS26 edition of Berlin Fashion Week continued the partnership with REFERENCE STUDIO, again covering four brands inside a two-day production window. This time the operation moved to the legendary FUNKTURMPALAIS, a venue whose distinct character reshaped the visual language of the presentations.\n\n" +
       "Where the previous edition leaned into raw industrial texture, Funkturmpalais called for a more considered approach. Its historical weight and architectural character asked for staging decisions that honoured the space while letting each brand remain clearly its own.\n\n" +
       "Delivered in 2025, the shoot functioned as a complete all-service production, covering pre-production planning, on-site direction, and final output. The result was a second chapter of a recurring collaboration that demonstrated the scalability of the format across seasons and venues.",
-    video: null,
+    videos: [
+      'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/ss26-david-koma.mp4',
+      'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/ss26-gmbh.mp4',
+      'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/ss26-marie-lueder.mp4',
+      'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/ss26-ottolinger.mp4',
+    ],
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
       { label: 'Location',  value: 'Berlin' },
@@ -111,7 +116,10 @@ const PROJECTS = [
       "We ran the full production for FW26 during Berlin Fashion Week together with REFERENCE STUDIO. Four fashion brands shared the same venue, but each one needed its own voice, its own direction, its own moment.\n\n" +
       "The KANT GARAGE wasn\u2019t just a backdrop. Its raw industrial character bled into every look we built, and a lot of the work went into calibrating lighting, staging, and audience flow so every brand could land as its own world inside the same space.\n\n" +
       "The whole thing happened in a 48 hour window in 2025. Tight coordination across brand teams, talent, and crew. Every phase of the production, from planning to direction on the floor through to final delivery, lived inside those two continuous days.",
-    video: null,
+    videos: [
+      'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/fw26-andrej-gronau.mp4',
+      'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/fw26-gmbh.mp4',
+    ],
     credits: [
       { label: 'Direction', value: 'nimmersatt' },
       { label: 'Location',  value: 'Berlin' },
