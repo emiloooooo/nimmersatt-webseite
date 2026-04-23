@@ -231,7 +231,7 @@ const LEGACY_ENTRIES = [];
 ══════════════════════════════════════════════ */
 const CONFIG = {
   FRAME_COUNT:     79,
-  FRAME_SRC:       (slug, i) => `frames/${slug}/frame${String(i).padStart(4, '0')}.jpg`,
+  FRAME_SRC:       (slug, i) => `frames/${slug}/frame${String(i).padStart(4, '0')}.webp`,
   CONCURRENCY:     8,
   PRIORITY_FRAMES: 16,
 
@@ -321,6 +321,10 @@ class FrameLoader {
       const frameIdx = sec.queue[sec.qi++];
       sec.active++;
       const img = new Image();
+      // Off-thread decode so the main thread stays free for the RAF
+      // render loop. Combined with WebP frames this shaves a few ms per
+      // frame swap under fast scroll, which is where judder used to show.
+      img.decoding = 'async';
       const done = () => {
         sec.frames[frameIdx] = (img.complete && img.naturalWidth) ? img : null;
         sec.loadedCount++;
