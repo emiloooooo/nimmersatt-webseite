@@ -24,7 +24,7 @@ const PROJECTS = [
   {
     title: 'Stylo - Alles Gut (Short Film)',
     slug:  'berlin-klohaus',
-    body:  "A couple's story framed within Berlin's everyday rhythm. A short drama built on invisible transitions, where quiet emotional turns carry the narrative and the city acts as a silent third character.",
+    body:  "A couple's story framed within Berlin's everyday rhythm. A short drama built on invisible transitions where the city acts as a silent third character.",
     description:
       "The project was developed as a short dramatic film following a couple moving through the texture of Berlin daily life. Set within a Klohaus location, the narrative focused on quiet emotional turns rather than plot mechanics, using the city itself as a silent third character.\n\n" +
       "The defining craft choice was the use of invisible transitions. Edit points built to dissolve between scenes without ever pulling the viewer out. It took careful pre-planning of blocking, continuity and camera placement so that shifts in time and space could be absorbed rather than announced.\n\n" +
@@ -46,7 +46,7 @@ const PROJECTS = [
   {
     title: '032c x CUPRA (Collaboration)',
     slug:  'paris',
-    body:  "Urban fashion energy meeting automotive identity inside Paris Fashion Week. A collaboration with 032c where fashion codes hold the surface and CUPRA sits underneath, carried through the compressed rhythm of the event calendar.",
+    body:  "Urban fashion energy meeting automotive identity inside Paris Fashion Week. A 032c collaboration where fashion codes hold the surface and CUPRA sits underneath.",
     description:
       "The project came out of a collaboration between 032c and CUPRA, rooted in the urban fashion sensibility that defines the 032c world. The brief was to bring CUPRA into that context without diluting either side, letting fashion codes hold the surface while the automotive identity sat underneath.\n\n" +
       "Timed to coincide with Paris Fashion Week, the production operated inside the compressed schedule of the event calendar. Shooting and direction had to navigate the logistical reality of Paris during fashion week while still delivering a piece that felt deliberate rather than reactive.\n\n" +
@@ -129,7 +129,7 @@ const PROJECTS = [
   {
     title: 'Whispers - WINTERGARTEN (Short Film)',
     slug:  'hermannplatz',
-    body:  "A quiet confrontation with the stories Berlin's youth rarely speak aloud. A short film built around Hermannplatz and Wintergarten, leaning into silences and textures rather than spectacle to make space for a generation of boys.",
+    body:  "A quiet confrontation with the stories Berlin's youth rarely speak aloud. A short film built around Hermannplatz, leaning into silences rather than spectacle.",
     description:
       "The short film was developed to follow a thread of Berlin youth culture that usually stays outside the frame. Anchored around Hermannplatz and the Wintergarten location, it approached a story of abuse and trauma with the intent of making space for a generation of boys whose experiences often remain unspoken.\n\n" +
       "The directing approach chose restraint over spectacle. Rather than dramatising the subject matter, the production leaned into silences, textures and environmental detail, using the familiar geography of Berlin as a holding space for something heavier than what you actually see on screen.\n\n" +
