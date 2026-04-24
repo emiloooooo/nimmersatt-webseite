@@ -969,8 +969,11 @@ function drawVignette(ctx, w, h) {
   // ── Touch ──
   // Mobile touch traverses far less pixel distance than a trackpad scroll,
   // so give each finger-pixel more weight to reach the next project without
-  // multiple drags.
-  const TOUCH_MULTIPLIER = window.innerWidth <= 820 ? 12.0 : 1.2;
+  // multiple drags. Mobile multiplier dialled back from 12.0 to 6.0 (−50 %)
+  // per design ask — the previous value was overshooting hard stops on
+  // light flicks; this halves the per-frame target jump so the scene
+  // breathes more under a finger drag.
+  const TOUCH_MULTIPLIER = window.innerWidth <= 820 ? 6.0 : 1.2;
   let touchY = 0;
   window.addEventListener('touchstart', (e) => { touchY = e.touches[0].clientY; }, { passive: true });
   window.addEventListener('touchmove', (e) => {
