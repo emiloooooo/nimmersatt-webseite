@@ -249,7 +249,11 @@ const CONFIG = {
   VIGNETTE_SIDES:  0.14,
   VIGNETTE_TB:     0.08,
 
-  SENSITIVITY:     0.0010,
+  // 1.5× the previous 0.0010 — every wheel tick / finger-pixel moves
+  // targetPos that much further, so the whole scene scrolls through ~50 %
+  // faster end-to-end. Touch and trackpad both pick this up because both
+  // input paths funnel through handleDelta() which multiplies by this.
+  SENSITIVITY:     0.0015,
   LERP_SPEED:      0.075,
 };
 
