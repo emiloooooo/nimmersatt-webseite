@@ -1424,10 +1424,30 @@ function drawVignette(ctx, w, h) {
 
   let playerSource = 'scene'; // 'scene' or 'menu'
 
-  function openPlayer(target, source = 'scene') {
+  // ── Browser-history integration ──
+  // The player behaves like its own page: opening pushes a
+  // `?p=<slug>` state onto history, the browser back button or the X
+  // button pop it, and closing restores the exact scroll position and
+  // (if it came from the menu) re-opens the menu. A direct URL load
+  // with ?p=<slug> opens the corresponding project on boot.
+  //
+  // Flow:
+  //   openPlayer → doOpenPlayer (DOM) → pushState (unless we're being
+  //                                       called by popstate handler)
+  //   closePlayer → history.back() → triggers popstate → doClosePlayer
+  //   popstate → if player now shouldn't be open → doClosePlayer
+  //            → if player now should be open (forward nav) → doOpenPlayer
+  let suppressHistoryPush = false; // set while popstate drives open/close
+  function projectSlug(project) {
+    return project && typeof project.slug === 'string' ? project.slug : '';
+  }
+  function findProjectBySlug(slug) {
+    return PROJECTS.find((p) => p.slug === slug);
+  }
+
+  function doOpenPlayer(target, source = 'scene') {
     let project;
     if (target && typeof target === 'object') {
-      // Direct project object (legacy entries and similar off-scene sources).
       project = target;
     } else {
       const projectIdx = (typeof target === 'number')
@@ -1435,14 +1455,7 @@ function drawVignette(ctx, w, h) {
         : getRenderState(currentPos).emerging.projectIdx;
       project = PROJECTS[projectIdx];
     }
-    if (!project) return;
-    // Make the modal visible BEFORE populating the video. iOS Safari
-    // and mobile Chrome suspend load() / play() on a <video> inside a
-    // visibility:hidden container — the previous order left the clip
-    // loading forever on phones because setStageVideo ran while the
-    // modal was still hidden. Opening the modal first guarantees the
-    // element is part of the visible render tree when load() / play()
-    // run, so the user gesture carries through to actual playback.
+    if (!project) return null;
     playerSnapshot = { currentPos, targetPos, inDeadzone, deadzoneAt, deadzoneAccum };
     playerSource = source;
     playerModal.classList.add('is-open');
@@ -1450,16 +1463,32 @@ function drawVignette(ctx, w, h) {
     document.body.classList.add('is-player-open');
     populatePlayer(project);
     updateProjectNavVisibility();
+    return project;
   }
 
-  function closePlayer() {
+  function openPlayer(target, source = 'scene') {
+    const project = doOpenPlayer(target, source);
+    if (!project) return;
+    // Reflect the player as its own page in browser history. Guard the
+    // push when popstate is driving us (forward-navigation) so we don't
+    // stack duplicate states.
+    if (!suppressHistoryPush) {
+      const slug = projectSlug(project);
+      const url  = slug
+        ? (window.location.pathname + '?p=' + encodeURIComponent(slug))
+        : window.location.pathname;
+      try {
+        history.pushState({ player: true, slug, source }, '', url);
+      } catch (e) { /* ignore — pushState can fail in some sandboxes */ }
+    }
+  }
+
+  function doClosePlayer() {
     playerModal.classList.remove('is-open');
     playerModal.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('is-player-open');
     updateProjectNavVisibility();
     hideLoading();
-    // Stop any playing video so audio doesn't continue behind the
-    // scroll-scene after the modal closes.
     if (playerVideo) {
       try { playerVideo.pause(); } catch (e) { /* ignore */ }
     }
@@ -1471,13 +1500,75 @@ function drawVignette(ctx, w, h) {
       deadzoneAccum = playerSnapshot.deadzoneAccum;
       playerSnapshot = null;
     }
-    // If the player was opened from the menu, return the user to the menu
-    // instead of dropping back to the scroll scene.
     if (playerSource === 'menu') {
       setMenu(true);
     }
     playerSource = 'scene';
   }
+
+  function closePlayer() {
+    // If popstate drove the close, history is already rewound — just
+    // run the cleanup. Otherwise ask the browser to navigate back, and
+    // the popstate handler will call doClosePlayer() when it fires.
+    if (suppressHistoryPush) {
+      doClosePlayer();
+      return;
+    }
+    if (history.state && history.state.player) {
+      history.back();
+      return;
+    }
+    doClosePlayer();
+  }
+
+  window.addEventListener('popstate', (e) => {
+    const state = e.state;
+    const openNow = isPlayerOpen();
+    const wantOpen = !!(state && state.player);
+    if (openNow && !wantOpen) {
+      // Browser navigated away from the player state → close without
+      // pushing anything back onto history.
+      suppressHistoryPush = true;
+      try { doClosePlayer(); } finally { suppressHistoryPush = false; }
+    } else if (!openNow && wantOpen) {
+      // Forward nav landed us on a player state — reopen that project.
+      const project = findProjectBySlug(state.slug);
+      if (project) {
+        suppressHistoryPush = true;
+        try { doOpenPlayer(project, state.source || 'scene'); } finally { suppressHistoryPush = false; }
+      }
+    } else if (openNow && wantOpen) {
+      // Same kind of state but maybe a different slug (e.g. forward through
+      // multiple pushed states). Swap the visible project to match.
+      const project = findProjectBySlug(state.slug);
+      if (project) populatePlayer(project);
+    }
+  });
+
+  // Initial URL handling — open the player immediately if the page was
+  // loaded with ?p=<slug> (deep link or back-to-player navigation from
+  // another tab). The replaceState normalizes the current entry so
+  // later history.back() leaves the app cleanly instead of getting
+  // stuck on ?p=… with a null state.
+  (function bootFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const slug   = params.get('p');
+    if (slug) {
+      history.replaceState({ player: true, slug, source: 'scene' }, '', window.location.pathname + '?p=' + encodeURIComponent(slug));
+      const project = findProjectBySlug(slug);
+      if (project) {
+        // Defer to next tick so the rest of the IIFE finishes wiring.
+        setTimeout(() => {
+          suppressHistoryPush = true;
+          try { doOpenPlayer(project, 'scene'); } finally { suppressHistoryPush = false; }
+        }, 0);
+      }
+    } else {
+      // Mark the home entry so popstate from a future push gets a
+      // well-defined state object to inspect.
+      history.replaceState({ player: false }, '', window.location.pathname + window.location.hash);
+    }
+  })();
 
   // Click anywhere on the scroll surface opens the player for the current project.
   // Ignore clicks on the logo button, the menu, and inside the modal itself.
