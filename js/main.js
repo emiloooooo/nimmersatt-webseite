@@ -16,7 +16,7 @@ const PROJECTS = [
       'The project followed a strict 24-hour turnaround in February 2026. From the initial shoot to the final 3D-integrated delivery, the timeline was optimized to meet the peak interest of the Berlinale week.',
     video: 'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/charli-xcx.mp4',
     credits: [
-      { label: 'Direction', value: 'nimmersatt' },
+      { label: 'Presented by', value: 'nimmersatt' },
       { label: 'Location',  value: 'Berlin' },
       { label: 'Year',      value: '2026' },
     ],
@@ -31,7 +31,7 @@ const PROJECTS = [
       "Produced in 2025, the shoot operated as a full short drama set, balancing the intimacy of the two-character arc with the technical discipline of continuous narrative. The result placed the audience inside the couple's story instead of observing it from the outside.",
     video: 'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/stylo.mp4',
     credits: [
-      { label: 'Direction', value: 'nimmersatt' },
+      { label: 'Presented by', value: 'nimmersatt' },
       { label: 'Location',  value: 'Berlin' },
       { label: 'Year',      value: '2025' },
     ],
@@ -53,7 +53,7 @@ const PROJECTS = [
       "Completed in 2024, the final work sat at the intersection of fashion media and brand collaboration, translating CUPRA into a language that read naturally alongside 032c's editorial world.",
     video: 'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/cupra-everything-counts.mp4',
     credits: [
-      { label: 'Direction', value: 'nimmersatt' },
+      { label: 'Presented by', value: 'nimmersatt' },
       { label: 'Location',  value: 'Paris' },
       { label: 'Year',      value: '2024' },
     ],
@@ -68,7 +68,7 @@ const PROJECTS = [
       'In October 2024, the team traveled internationally to multiple sites. The resulting footage was processed to meet the launch of the brand\u2019s sustainability campaign, requiring a highly organized workflow from field capture to final cut.',
     video: 'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/marc-o-polo.mp4',
     credits: [
-      { label: 'Direction', value: 'nimmersatt' },
+      { label: 'Presented by', value: 'nimmersatt' },
       { label: 'Location',  value: 'Global' },
       { label: 'Year',      value: '2024' },
     ],
@@ -83,7 +83,7 @@ const PROJECTS = [
       'In September 2025, the project was defined by its speed of execution. After submitting the initial edit, a thirty-minute feedback loop led directly to the final upload, demonstrating a highly effective production cycle.',
     video: 'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/3strikes-color.mp4',
     credits: [
-      { label: 'Direction', value: 'nimmersatt' },
+      { label: 'Presented by', value: 'nimmersatt' },
       { label: 'Location',  value: 'Berlin' },
       { label: 'Year',      value: '2025' },
     ],
@@ -103,7 +103,7 @@ const PROJECTS = [
       'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/ss26-ottolinger.mp4',
     ],
     credits: [
-      { label: 'Direction', value: 'nimmersatt' },
+      { label: 'Presented by', value: 'nimmersatt' },
       { label: 'Location',  value: 'Berlin' },
       { label: 'Year',      value: '2025' },
     ],
@@ -121,7 +121,7 @@ const PROJECTS = [
       'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/fw26-gmbh.mp4',
     ],
     credits: [
-      { label: 'Direction', value: 'nimmersatt' },
+      { label: 'Presented by', value: 'nimmersatt' },
       { label: 'Location',  value: 'Berlin' },
       { label: 'Year',      value: '2025' },
     ],
@@ -136,7 +136,7 @@ const PROJECTS = [
       "Produced in 2025, the project was positioned less as a film to be consumed and more as a signal to be received. The goal was to speak for a new generation of boys and a side of Berlin that rarely gets represented on its own terms.",
     video: 'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/whispers-wintergarten.mp4',
     credits: [
-      { label: 'Direction', value: 'nimmersatt' },
+      { label: 'Presented by', value: 'nimmersatt' },
       { label: 'Location',  value: 'Berlin' },
       { label: 'Year',      value: '2025' },
     ],
@@ -158,7 +158,7 @@ const PROJECTS = [
       'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/index-000022.mp4',
     ],
     credits: [
-      { label: 'Direction', value: 'nimmersatt' },
+      { label: 'Presented by', value: 'nimmersatt' },
       { label: 'Location',  value: 'Porto' },
       { label: 'Year',      value: '2024' },
     ],
@@ -174,7 +174,7 @@ const PROJECTS = [
       'In November 2025, the project involved managing an extensive volume of data. The timeline integrated over 1,000 individual images and 50 typefaces, requiring a precise digital arrangement to ensure a cohesive visual experience.',
     video: 'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/soyhan-push-push.mp4',
     credits: [
-      { label: 'Direction', value: 'nimmersatt' },
+      { label: 'Presented by', value: 'nimmersatt' },
       { label: 'Location',  value: 'Berlin' },
       { label: 'Year',      value: '2025' },
     ],
@@ -189,7 +189,7 @@ const PROJECTS = [
       'Released in August 2025, the project focused on maintaining high production standards within a relaxed studio environment. The challenge was ensuring a polished final product that successfully mirrored luxury commercial standards.',
     video: 'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/dante-yn.mp4',
     credits: [
-      { label: 'Direction', value: 'nimmersatt' },
+      { label: 'Presented by', value: 'nimmersatt' },
       { label: 'Location',  value: 'Wolfsburg' },
       { label: 'Year',      value: '2025' },
     ],
@@ -204,7 +204,7 @@ const PROJECTS = [
       'Completed in February 2026, the delivery was specifically timed for the Inhorgenta trade fair in Munich. The final film served as the visual centerpiece for the Benchalist exhibition stand, presented on a full-screen display to an international industry audience.',
     video: 'https://emiloooooo.github.io/nimmersatt-webseite/web-assets/benchalist.mp4',
     credits: [
-      { label: 'Direction', value: 'nimmersatt' },
+      { label: 'Presented by', value: 'nimmersatt' },
       { label: 'Location',  value: 'Munich' },
       { label: 'Year',      value: '2026' },
     ],
